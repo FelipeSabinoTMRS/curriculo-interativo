@@ -22,7 +22,7 @@ const mockResume: Resume = {
     phone: "(11) 99999-9999",
     location: "São Paulo, SP",
     summary: "Desenvolvedor apaixonado por tecnologia com experiência em desenvolvimento full stack. Especializado em TypeScript, React, Node.js e soluções cloud. Sempre em busca de desafios que permitam criar soluções inovadoras e impactantes.",
-    githubUrl: "https://github.com/FelipeSabinoTMRS/curriculo_dev",
+    githubUrl: "https://github.com/FelipeSabinoTMRS/curriculo-interativo",
   },
   experiences: [
     {
@@ -72,7 +72,7 @@ const mockResume: Resume = {
       name: "Sistema de Currículo Interativo",
       description: "Aplicação desenvolvida do zero para demonstrar habilidades técnicas aos recrutadores. Utiliza React Router, TypeScript, Cloudflare D1 e R2 com design moderno inspirado em IA.",
       technologies: ["React Router", "TypeScript", "Cloudflare", "Tailwind CSS", "D1", "R2"],
-      githubUrl: "https://github.com/FelipeSabinoTMRS/curriculo_dev"
+      githubUrl: "https://github.com/FelipeSabinoTMRS/curriculo-interativo"
     }
   ]
 };

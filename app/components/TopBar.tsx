@@ -74,7 +74,7 @@ export default function TopBar({
 
             {/* GitHub Link */}
             <a
-              href="https://github.com/FelipeSabinoTMRS/curriculo_dev"
+              href="https://github.com/FelipeSabinoTMRS/curriculo-interativo"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-3 py-2 bg-gray-900/50 hover:bg-gray-900/70 text-white rounded-lg transition-all duration-300 text-sm"

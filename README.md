@@ -58,8 +58,8 @@ O design utiliza um esquema de cores azul inspirado em inteligência artificial,
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/FelipeSabinoTMRS/curriculo_dev.git
-cd curriculo_dev
+git clone https://github.com/FelipeSabinoTMRS/curriculo-interativo.git
+cd curriculo-interativo
 ```
 
 2. Instale as dependências:
