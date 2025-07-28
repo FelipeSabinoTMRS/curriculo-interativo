@@ -1,0 +1,219 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-100 text-gray-900 font-sans antialiased;
+  }
+}
+
+@layer components {
+  .ai-card {
+    @apply bg-white/70 backdrop-blur-sm border border-white/20 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+  
+  .ai-button {
+    @apply bg-ai-gradient text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border-0;
+  }
+  
+  .ai-button-secondary {
+    @apply bg-white/10 backdrop-blur-sm text-ai-blue-700 px-6 py-3 rounded-lg font-semibold border border-ai-blue-200 hover:bg-white/20 transition-all duration-300;
+  }
+  
+  /* Container responsivo para o currículo */
+  .resume-container {
+    @apply w-full flex justify-center;
+    /* Escala responsiva baseada na largura da viewport */
+    transform-origin: top center;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Container responsivo para o debug panel */
+  .debug-panel-container {
+    transform-origin: top right;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Escala para telas pequenas */
+  @media (max-width: 1023px) {
+    .resume-container {
+      transform: scale(0.85);
+    }
+    
+    .debug-panel-container {
+      transform: scale(0.85);
+    }
+  }
+  
+  @media (max-width: 899px) {
+    .resume-container {
+      transform: scale(0.75);
+    }
+    
+    .debug-panel-container {
+      transform: scale(0.75);
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .resume-container {
+      transform: scale(0.65);
+    }
+    
+    .debug-panel-container {
+      transform: scale(0.65);
+    }
+  }
+  
+  @media (max-width: 639px) {
+    .resume-container {
+      transform: scale(0.55);
+    }
+    
+    .debug-panel-container {
+      transform: scale(0.55);
+    }
+  }
+  
+  @media (max-width: 520px) {
+    .resume-container {
+      transform: scale(0.45);
+    }
+    
+    .debug-panel-container {
+      transform: scale(0.45);
+    }
+  }
+  
+  @media (max-width: 420px) {
+    .resume-container {
+      transform: scale(0.4);
+    }
+    
+    .debug-panel-container {
+      transform: scale(0.4);
+    }
+  }
+  
+  .resume-paper {
+    @apply bg-white rounded-lg shadow-lg border border-gray-200 min-h-[297mm] w-[210mm];
+    /* A4 paper dimensions */
+    aspect-ratio: 210/297;
+    margin: 0 auto;
+  }
+  
+  .control-panel {
+    @apply ai-card p-6;
+  }
+}
+
+@layer utilities {
+  .ai-glow {
+    box-shadow: 0 0 20px rgba(56, 172, 255, 0.3);
+  }
+  
+  .ai-glow-strong {
+    box-shadow: 0 0 30px rgba(56, 172, 255, 0.5);
+  }
+  
+  /* Animated background utilities */
+  .animate-bg-shift {
+    background-size: 200% 200%;
+    background-attachment: fixed;
+  }
+  
+  .animate-gradient-flow {
+    background-size: 300% 300%;
+    background-attachment: fixed;
+  }
+  
+  /* Floating orbs */
+  .delay-500 {
+    animation-delay: 0.5s;
+  }
+  
+  .delay-1000 {
+    animation-delay: 1s;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Reset da escala responsiva durante impressão */
+  .resume-container {
+    transform: none !important;
+    width: 100% !important;
+    display: block !important;
+  }
+  
+  .debug-panel-container {
+    transform: none !important;
+  }
+  
+  .resume-paper {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: auto !important;
+    border-radius: 0 !important;
+    background: white !important;
+  }
+  
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  html {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  * {
+    box-shadow: none !important;
+  }
+  
+  @page {
+    margin: 0 !important;
+    padding: 0 !important;
+    size: A4;
+    /* Remove todas as bordas da página */
+    border: none !important;
+  }
+  
+  /* Controle de quebras de página */
+  .resume-paper {
+    page-break-inside: avoid;
+  }
+  
+  /* Forçar quebra de página quando necessário */
+  .print\:break-before-page {
+    page-break-before: always !important;
+  }
+  
+  /* Altura mínima para páginas A4 */
+  .print\:min-h-\[297mm\] {
+    min-height: 297mm !important;
+  }
+  
+  /* Evitar quebras de página desnecessárias */
+  .resume-paper h1,
+  .resume-paper h2,
+  .resume-paper h3 {
+    page-break-after: avoid;
+  }
+  
+  /* Evitar quebra dentro de seções */
+  section {
+    page-break-inside: avoid;
+  }
+} 

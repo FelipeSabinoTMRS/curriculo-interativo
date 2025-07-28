@@ -17,11 +17,12 @@
     "@remix-run/cloudflare-pages": "*",
     "@remix-run/react": "*",
     "isbot": "^4.1.0",
+    "lucide-react": "^0.532.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240512.0",
+    "@cloudflare/workers-types": "^4.20250726.0",
     "@remix-run/dev": "*",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
