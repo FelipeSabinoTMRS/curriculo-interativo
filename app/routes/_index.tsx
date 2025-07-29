@@ -148,14 +148,19 @@ export default function Index() {
     }
   }, [isDarkTheme]);
 
-  // Salvar dados em cookie
+  // Salvar dados em cookie ou localStorage como fallback
   const saveResumeToCookie = (data: Resume) => {
     if (typeof window !== 'undefined') {
       try {
         const jsonData = JSON.stringify(data);
-        console.log('Salvando no cookie:', jsonData.substring(0, 100) + '...');
+        console.log('Salvando dados:', jsonData.substring(0, 100) + '...');
+        
+        // Tentar salvar no cookie primeiro
         setCookie(RESUME_DATA_COOKIE, jsonData, COOKIE_MAX_AGE);
-        console.log('Cookie salvo com sucesso');
+        
+        // Como fallback, também salvar no localStorage
+        localStorage.setItem(RESUME_DATA_COOKIE, jsonData);
+        console.log('Dados salvos no localStorage como fallback');
       } catch (e) {
         console.error('Erro ao salvar dados do currículo:', e);
       }
@@ -164,14 +169,36 @@ export default function Index() {
 
   // Funções para manipular cookies
   const setCookie = (name: string, value: string, maxAgeSeconds: number) => {
-    const cookieString = `${name}=${encodeURIComponent(value)}; max-age=${maxAgeSeconds}; path=/; samesite=lax`;
-    console.log('Definindo cookie:', cookieString.substring(0, 100) + '...');
-    document.cookie = cookieString;
-    console.log('Cookies atuais:', document.cookie);
+    // Tentar diferentes configurações de cookie
+    const cookieOptions = [
+      `${name}=${encodeURIComponent(value)}; max-age=${maxAgeSeconds}; path=/`,
+      `${name}=${encodeURIComponent(value)}; path=/`,
+      `${name}=${encodeURIComponent(value)}; max-age=${maxAgeSeconds}`,
+      `${name}=${encodeURIComponent(value)}`
+    ];
+    
+    console.log('Tentando salvar cookie com diferentes configurações...');
+    
+    for (let i = 0; i < cookieOptions.length; i++) {
+      const cookieString = cookieOptions[i];
+      console.log(`Tentativa ${i + 1}:`, cookieString.substring(0, 100) + '...');
+      document.cookie = cookieString;
+      
+      // Verificar se funcionou
+      const savedCookie = getCookie(name);
+      if (savedCookie) {
+        console.log(`Cookie salvo com sucesso na tentativa ${i + 1}!`);
+        return;
+      }
+    }
+    
+    console.error('ERRO: Cookie não foi salvo com nenhuma configuração!');
   };
 
   const getCookie = (name: string) => {
-    console.log('Buscando cookie:', name);
+    console.log('Buscando dados:', name);
+    
+    // Primeiro tentar buscar no cookie
     console.log('Todos os cookies:', document.cookie);
     const cookies = document.cookie.split(';');
     for (let cookie of cookies) {
@@ -183,7 +210,15 @@ export default function Index() {
         return value;
       }
     }
-    console.log('Cookie não encontrado:', name);
+    
+    // Se não encontrou no cookie, tentar no localStorage
+    const localStorageValue = localStorage.getItem(name);
+    if (localStorageValue) {
+      console.log('Dados encontrados no localStorage:', name, '=', localStorageValue.substring(0, 100) + '...');
+      return localStorageValue;
+    }
+    
+    console.log('Dados não encontrados em cookie nem localStorage:', name);
     return null;
   };
 
@@ -191,7 +226,28 @@ export default function Index() {
     setIsDarkTheme(!isDarkTheme);
   };
 
+  // Função para limpar dados salvos (usada pelo botão "Limpar Dados Salvos")
+  const handleResetData = () => {
+    if (typeof window !== 'undefined') {
+      // Limpar cookie
+      document.cookie = `${RESUME_DATA_COOKIE}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      
+      // Limpar localStorage
+      localStorage.removeItem(RESUME_DATA_COOKIE);
+      
+      // Resetar para dados padrão
+      setResumeData(mockResume);
+      
+      dialog.showSuccess(
+        "Dados Limpos!",
+        "Todos os dados salvos foram removidos. O currículo voltou ao estado padrão.",
+        3000
+      );
+    }
+  };
+
   const handleEditToggle = () => {
+    console.log('handleEditToggle chamado, isEditing atual:', isEditing);
     if (isEditing) {
       dialog.showConfirm(
         "Finalizar Edição", 
@@ -212,6 +268,7 @@ export default function Index() {
         }
       );
     } else {
+      console.log('Ativando modo de edição');
       setIsEditing(true);
       setEditSession(`session_${Date.now()}`);
       dialog.showWarning(
@@ -597,13 +654,14 @@ export default function Index() {
       {/* Content overlay */}
       <div className={`relative z-10 ${isDarkTheme ? 'bg-gray-900/95' : 'bg-gray-200'} backdrop-blur-sm min-h-screen`}>
         <div className="px-1 py-0 sm:py-1 md:py-1 lg:py-2 sm:px-1.5 md:px-2 no-print">
-          <TopBar 
-            onEdit={handleEditToggle}
-            onDownloadPDF={handleDownloadPDF}
-            isEditing={isEditing}
-            isDarkTheme={isDarkTheme}
-            onThemeToggle={handleThemeToggle}
-          />
+                     <TopBar 
+             onEdit={handleEditToggle}
+             onDownloadPDF={handleDownloadPDF}
+             onResetData={handleResetData}
+             isEditing={isEditing}
+             isDarkTheme={isDarkTheme}
+             onThemeToggle={handleThemeToggle}
+           />
           <ResumeViewer 
             resume={resumeData} 
             isDarkTheme={isDarkTheme}

@@ -239,6 +239,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
   }, [currentScale, isInitialized, localResume, isEditing]);
 
   const handleFieldUpdate = (section: string, field: string, value: any) => {
+    console.log('ResumeViewer handleFieldUpdate chamado:', { section, field, value });
     const updatedResume = { ...localResume };
     
     if (section === 'personalInfo') {
@@ -321,6 +322,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
     }
     
     setLocalResume(updatedResume);
+    console.log('ResumeViewer chamando onFieldChange com:', updatedResume);
     onFieldChange?.(updatedResume);
   };
 

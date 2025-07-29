@@ -4,17 +4,18 @@ import { Edit3, Download, Menu, X, Github, Sun, Moon, RefreshCw } from 'lucide-r
 interface TopBarProps {
   onEdit: () => void;
   onDownloadPDF: () => void;
+  onResetData: () => void;
   isEditing: boolean;
   isDarkTheme: boolean;
   onThemeToggle: () => void;
 }
 
-// Nome do cookie usado para armazenar os dados
-const RESUME_DATA_COOKIE = 'curriculo_dados';
+
 
 export default function TopBar({ 
   onEdit, 
   onDownloadPDF, 
+  onResetData,
   isEditing, 
   isDarkTheme, 
   onThemeToggle 
@@ -32,15 +33,7 @@ export default function TopBar({
     setMobileMenuOpen(false);
   };
 
-  // Função para limpar os dados salvos e forçar recarregamento
-  const handleResetData = () => {
-    if (typeof window !== 'undefined') {
-      // Limpar cookie
-      document.cookie = `${RESUME_DATA_COOKIE}=; max-age=0; path=/; samesite=lax`;
-      // Recarregar a página
-      window.location.reload();
-    }
-  };
+  // Usar a função onResetData passada como prop
 
   // Fechar menu quando redimensionar para desktop
   useEffect(() => {
@@ -108,7 +101,7 @@ export default function TopBar({
           </button>
 
           <button 
-            onClick={handleResetData}
+            onClick={onResetData}
             className={`btn-sober ${isDarkTheme ? 'dark' : ''}`}
             title="Limpar Dados Salvos"
           >
@@ -219,7 +212,7 @@ export default function TopBar({
                   <span>{isEditing ? 'Finalize a edição primeiro' : 'Salvar como PDF'}</span>
                 </button>
                 <button 
-                  onClick={() => { handleResetData(); closeMobileMenu(); }}
+                  onClick={() => { onResetData(); closeMobileMenu(); }}
                   className={`w-full flex items-center space-x-3 p-4 rounded-lg transition-colors ${
                     isDarkTheme ? 'bg-gray-600 hover:bg-gray-700 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-900'
                   }`}
