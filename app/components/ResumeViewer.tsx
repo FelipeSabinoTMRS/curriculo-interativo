@@ -656,10 +656,11 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                     href={project.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-1 rounded transition-colors"
+                    className="flex items-center space-x-2 p-1 rounded transition-colors"
                     style={{ color: selectedTheme.colors.primary }}
                   >
                     <Github size={16} />
+                    <span className="text-sm hover:underline">{project.githubUrl.replace('https://github.com/', '')}</span>
                   </a>
                 )}
               </>

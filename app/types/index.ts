@@ -5,7 +5,7 @@ export interface PersonalInfo {
   phone: string;
   location: string;
   githubUrl: string;
-  linkedinUrl: string;
+
   summary: string;
   salary?: string;
   acceptingOffers?: boolean;
@@ -78,4 +78,4 @@ export interface ToastNotification {
   message?: string;
   duration?: number;
   timestamp: Date;
-} 
+}

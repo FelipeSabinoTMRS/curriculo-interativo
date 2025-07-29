@@ -7,6 +7,7 @@ import {
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/cloudflare";
 
+import "./tailwind.css";
 import "./styles/globals.css";
 
 export const links: LinksFunction = () => [
@@ -42,4 +43,4 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return <Outlet />;
-} 
+}
