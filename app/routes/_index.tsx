@@ -52,11 +52,11 @@ const mockResume: Resume = {
     {
       institution: "FIAP - Faculdade de Informática e Administração Paulista",
       degree: "Graduação em Técnico em Inteligência Artificial",
-      fieldOfStudy: "Inteligência Artificial",
+      fieldOfStudy: "1° Sem. Concluído com Nota 9.83/10 - FIAP Certified Machine Learning Professional\n2° Sem. em Andamento",
       startDate: "Janeiro de 2025",
       endDate: "Dezembro de 2026",
       gpa: "9.83 de 10",
-      description: "Primeiro semestre 2025 - FIAP Certified Machine Learning Professional. Foco em liderar equipes de implantação e desenvolvimento de soluções utilizando todas as vertentes da inteligência artificial, tais como: Machine Learning, Deep Learning, Chat Bot, processamento de linguagem natural e Reinforcement Learning."
+      description: "Foco em liderar equipes de implantação e desenvolvimento de soluções utilizando todas as vertentes da inteligência artificial, tais como: Machine Learning, Deep Learning, Chat Bot, processamento de linguagem natural e Reinforcement Learning."
     }
   ],
   skills: [
