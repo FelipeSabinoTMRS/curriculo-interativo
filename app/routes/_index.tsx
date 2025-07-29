@@ -18,71 +18,70 @@ export const meta: MetaFunction = () => {
 // Dados do currículo (mock data)
 const mockResume: Resume = {
   personalInfo: {
-    name: "Felipe Sabino",
-    title: "Desenvolvedor Full Stack",
-    email: "felipe@exemplo.com",
-    phone: "+55 (11) 99999-9999",
-    location: "São Paulo, SP",
-    githubUrl: "https://github.com/FelipeSabinoTMRS/curriculo-interativo",
-    linkedinUrl: "https://linkedin.com/in/felipe-sabino",
+    name: "Felipe Sabino da Silva",
+    title: "Desenvolvedor Full Stack e Futuro Técnico em IA pela FIAP",
+    email: "felipe@sabinoseg.com.br",
+    phone: "+55 (55) 99719-7937",
+    location: "Três de Maio, RS",
+    githubUrl: "http://localhost:5173/",
+    linkedinUrl: "",
     summary: "Desenvolvedor apaixonado por tecnologia com experiência em desenvolvimento web moderno usando React, TypeScript e Node.js. Especializado em soluções full-stack escaláveis e arquiteturas cloud-native."
   },
   experiences: [
     {
-      company: "Tech Solutions Inc.",
-      position: "Desenvolvedor Full Stack Sênior",
-      startDate: "2022-01",
-      endDate: undefined,
-      location: "São Paulo, SP",
-      description: "Liderança técnica em projetos de grande escala, desenvolvimento de APIs RESTful e interfaces responsivas. Implementação de arquiteturas serverless e CI/CD pipelines.",
-      technologies: ["React", "TypeScript", "Node.js", "AWS", "PostgreSQL", "Docker"]
+      company: "SABINOSEG Corretora de Seguros",
+      position: "Sistema Sabinoseg de Produção",
+      startDate: "Janeiro de 2020",
+      endDate: "atual",
+      location: "Três de Maio, RS",
+      description: "Desenvolvi, de forma autônoma e do zero até a implantação em nuvem, um sistema inovador para a corretora, utilizando tecnologias modernas como banco de dados NoSQL, processamento de dados em tempo real e integração de Inteligência Artificial (IA) com Large Language Models (LLM) e modelos treinados personalizados nos fluxos operacionais. O sistema já está em produção, sendo utilizado pela equipe interna.",
+      technologies: ["React", "TypeScript", "Node.js", "AWS", "Cloudflare Full Stack", "JavaScript", "API"]
     },
     {
-      company: "StartupXYZ",
+      company: "www.sabinoseg.com.br",
       position: "Desenvolvedor Frontend",
-      startDate: "2020-06",
-      endDate: "2021-12",
-      location: "São Paulo, SP",
-      description: "Desenvolvimento de aplicações web modernas e responsivas. Colaboração em equipe ágil para entrega de produtos inovadores.",
-      technologies: ["React", "JavaScript", "Styled Components", "REST APIs", "Git"]
+      startDate: "Janeiro de 2020",
+      endDate: "Atual",
+      location: "Três de Maio, RS",
+      description: "Site otimizado para desktop, tablet e mobile, com tempos de carregamentos extremamente rápidos graças ao pré-processamento de imagens. Tempo de carregamento médio de 1 segundo para cada 300 visitantes. Protótipo desenvolvido no figma.",
+      technologies: ["React", "Styled Components", "Git", "Figma", "Cloudflare Workers", "TypeScript", "Tailwind CSS"]
     }
   ],
   education: [
     {
-      institution: "Universidade de São Paulo",
-      degree: "Bacharelado em Ciência da Computação",
-      fieldOfStudy: "Ciência da Computação",
-      startDate: "2018-02",
-      endDate: "2021-12",
-      gpa: "8.5",
-      description: "Foco em desenvolvimento de software, algoritmos e estruturas de dados."
+      institution: "FIAP - Faculdade de Informática e Administração Paulista",
+      degree: "Graduação em Técnico em Inteligência Artificial",
+      fieldOfStudy: "Inteligência Artificial",
+      startDate: "Janeiro de 2025",
+      endDate: "Dezembro de 2026",
+      gpa: "9.83 de 10",
+      description: "Primeiro semestre 2025 - FIAP Certified Machine Learning Professional. Foco em liderar equipes de implantação e desenvolvimento de soluções utilizando todas as vertentes da inteligência artificial, tais como: Machine Learning, Deep Learning, Chat Bot, processamento de linguagem natural e Reinforcement Learning."
     }
   ],
   skills: [
     {
       category: "Frontend",
-      items: ["React", "TypeScript", "Next.js", "Tailwind CSS", "Vue.js"]
+      items: ["React", "TypeScript", "Tailwind CSS", "Figma", "UI e UX", "HTML", "JavaScript"]
     },
     {
       category: "Backend",
-      items: ["Node.js", "Python", "Express", "FastAPI", "PostgreSQL", "MongoDB"]
+      items: ["Node.js", "Python", "FastAPI", "TypeScript", "JavaScript", "API", "Machine Learning"]
     },
     {
       category: "DevOps",
-      items: ["Docker", "AWS", "GitHub Actions", "Terraform", "Kubernetes"]
+      items: ["GitHub Actions", "Cloudflare Full Stack", "Git"]
     },
     {
       category: "Ferramentas",
-      items: ["Git", "VS Code", "Figma", "Postman", "Linux"]
+      items: ["Git", "VS Code", "Figma", "Cursor", "Cloudflare"]
     }
   ],
   projects: [
     {
       name: "Currículo Interativo",
-      description: "Sistema de currículo responsivo e interativo desenvolvido com Remix, Cloudflare Workers. Funcionalidades incluem edição em tempo real, impressão otimizada e deploy automatizado.",
-      technologies: ["Remix", "TypeScript", "Cloudflare Workers", "Tailwind CSS"],
-      githubUrl: "https://github.com/FelipeSabinoTMRS/curriculo-interativo",
-      demoUrl: "https://curriculo-interativo.pages.dev"
+      description: "Sistema que permite criar currículos, desenvolvido com Typescript, Remix, implementado na Cloudflare Workers. As edições são salvas localmente com cookies do navegador.",
+      technologies: ["TypeScript", "Cloudflare Workers", "Tailwind CSS"],
+      githubUrl: "https://github.com/FelipeSabinoTMRS/curriculo-interativo"
     }
   ]
 };
@@ -107,10 +106,13 @@ export default function Index() {
   // Carregar tema e dados do currículo
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Limpar os dados do cookie para forçar o uso dos novos valores
+      document.cookie = `${RESUME_DATA_COOKIE}=; max-age=0; path=/; samesite=lax`;
+      
       // Carregar tema
       localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
       
-      // Carregar dados salvos do currículo
+      // Carregar dados salvos do currículo (agora usará o mockResume pois o cookie foi limpo)
       const savedResume = getCookie(RESUME_DATA_COOKIE);
       if (savedResume) {
         try {
@@ -157,64 +159,6 @@ export default function Index() {
     setIsDarkTheme(!isDarkTheme);
   };
 
-  const handlePrint = () => {
-    // Configurações especiais para impressão com fundo sempre claro
-    const printStyles = `
-      @media print {
-        body { margin: 0; padding: 0; background-color: white !important; }
-        .no-print { display: none !important; }
-        .print-only { display: block !important; }
-        
-        /* Garantir que todo texto e fundo sejam em cores apropriadas para impressão */
-        * {
-          color: black !important;
-          background-color: transparent !important;
-          print-color-adjust: exact !important;
-          -webkit-print-color-adjust: exact !important;
-        }
-        
-        /* Remover elementos de UI que não devem ser impressos */
-        header, nav, button, .hamburger, .mobile-menu, .mobile-menu-overlay,
-        .theme-toggle, .edit-toggle { display: none !important; }
-        
-        /* Forçar o fundo a ser branco para as páginas do currículo */
-        .resume-paper {
-          background-color: white !important;
-          box-shadow: none !important;
-          border: 1px solid #eee !important;
-          color: black !important;
-        }
-        
-        /* Garantir que a escala esteja em 100% */
-        .resume-container {
-          transform: none !important;
-          margin-bottom: 0 !important;
-        }
-      }
-    `;
-    
-    const styleSheet = document.createElement('style');
-    styleSheet.textContent = printStyles;
-    document.head.appendChild(styleSheet);
-    
-    // Mostrar diálogo de impressão
-    dialog.showInfo(
-      "Preparando impressão",
-      "O currículo será impresso em fundo claro, independente do tema atual.",
-      2000
-    );
-    
-    // Aguardar um pouco para o diálogo aparecer antes de imprimir
-    setTimeout(() => {
-      window.print();
-      
-      // Remover estilos de impressão após imprimir
-      setTimeout(() => {
-        document.head.removeChild(styleSheet);
-      }, 1000);
-    }, 1000);
-  };
-
   const handleEditToggle = () => {
     if (isEditing) {
       dialog.showConfirm(
@@ -258,84 +202,59 @@ export default function Index() {
       // Esperar um pouco para garantir que o dialog apareça
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      // Encontrar o elemento do currículo (exclui o TopBar)
-      const resumeElement = document.querySelector('.resume-viewer') as HTMLElement;
+      // Encontrar o container do currículo
+      const resumeContainer = document.querySelector('.resume-viewer') as HTMLElement;
       
-      if (!resumeElement) {
+      if (!resumeContainer) {
         throw new Error('Elemento do currículo não encontrado');
       }
 
-      // Salvar o estilo original 
-      const originalTransform = resumeElement.style.transform;
-      const originalMarginBottom = resumeElement.style.marginBottom;
-      const originalTransition = resumeElement.style.transition;
+      // Encontrar as duas páginas do currículo
+      const resumePages = resumeContainer.querySelectorAll('.resume-paper');
       
-      // Aplicar estilos para renderização com fundo claro para o PDF
-      const originalDarkElements = document.querySelectorAll('.bg-gray-900, .bg-gray-800, .text-white');
-      const originalStyles = new Map();
+      if (resumePages.length === 0) {
+        throw new Error('Páginas do currículo não encontradas');
+      }
+
+      // Adicionar classe para renderização específica do PDF
+      resumeContainer.classList.add('pdf-render');
+
+      // Salvar estilos originais
+      const originalTransform = resumeContainer.style.transform;
+      const originalMarginBottom = resumeContainer.style.marginBottom;
+      const originalTransition = resumeContainer.style.transition;
       
-      // Salvar estilos originais e aplicar estilos claros para captura
-      originalDarkElements.forEach((element, i) => {
+      // Salvar estado do tema para restaurar depois
+      const originalTheme = isDarkTheme;
+      
+      // Temporariamente forçar o tema claro para geração do PDF
+      if (isDarkTheme) {
+        // Aplicar tema claro a todo o container
+        resumeContainer.classList.remove('dark-theme');
+        resumeContainer.querySelectorAll('.bg-gray-900, .bg-gray-800, .bg-gray-700, .text-white, .text-gray-300')
+          .forEach(element => {
         const el = element as HTMLElement;
-        originalStyles.set(i, {
-          backgroundColor: el.style.backgroundColor,
-          color: el.style.color
-        });
-        
-        // Temporariamente converter para estilo claro para captura
-        if (el.classList.contains('bg-gray-900') || el.classList.contains('bg-gray-800')) {
-          el.style.backgroundColor = '#ffffff';
-        }
-        if (el.classList.contains('text-white')) {
-          el.style.color = '#000000';
-        }
-      });
+            el.dataset.originalClasses = el.className;
+            
+            // Substituir classes escuras por claras
+            el.className = el.className
+              .replace('bg-gray-900', 'bg-white')
+              .replace('bg-gray-800', 'bg-white')
+              .replace('bg-gray-700', 'bg-gray-100')
+              .replace('text-white', 'text-gray-900')
+              .replace('text-gray-300', 'text-gray-700');
+          });
+      }
 
       // Remover transform e margin para capturar em tamanho real
-      resumeElement.style.transform = 'none';
-      resumeElement.style.marginBottom = '0px';
-      resumeElement.style.transition = 'none';
+      resumeContainer.style.transform = 'none';
+      resumeContainer.style.marginBottom = '0px';
+      resumeContainer.style.transition = 'none';
 
-      // Aguardar a aplicação dos estilos (efeito visual que o usuário gostou)
+      // Aguardar a aplicação dos estilos
       await new Promise(resolve => setTimeout(resolve, 150));
 
-      // Configurações para máxima qualidade e melhor dimensionamento
-      const canvas = await html2canvas(resumeElement, {
-        scale: 3, // Escala muito alta para melhor qualidade
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff', // Sempre usar fundo branco independente do tema
-        width: resumeElement.scrollWidth,
-        height: resumeElement.scrollHeight,
-        scrollX: 0,
-        scrollY: 0,
-        logging: false,
-        ignoreElements: (element) => {
-          // Ignorar elementos de debug ou overlay
-          return element.classList?.contains('debug-element') || 
-                 element.classList?.contains('mobile-menu') ||
-                 element.classList?.contains('mobile-menu-overlay') || 
-                 false;
-        }
-      });
-
-      // Restaurar estilos originais
-      resumeElement.style.transform = originalTransform;
-      resumeElement.style.marginBottom = originalMarginBottom;
-      resumeElement.style.transition = originalTransition;
-      
-      // Restaurar cores originais dos elementos
-      originalDarkElements.forEach((element, i) => {
-        const el = element as HTMLElement;
-        const styles = originalStyles.get(i);
-        if (styles) {
-          el.style.backgroundColor = styles.backgroundColor;
-          el.style.color = styles.color;
-        }
-      });
-
-      // Criar PDF com dimensões otimizadas
-      const imgData = canvas.toDataURL('image/png', 1.0);
+      // Criar PDF com dimensões A4
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
@@ -347,45 +266,258 @@ export default function Index() {
       const pdfWidth = 210;
       const pdfHeight = 297;
       
-      // Margens muito pequenas para aproveitar máximo da folha
-      const margin = 5; // Apenas 5mm de margem
+      // Margens pequenas para aproveitar máximo da folha
+      const margin = 5;
       const availableWidth = pdfWidth - (2 * margin);
       const availableHeight = pdfHeight - (2 * margin);
 
-      // Calcular dimensões proporcionais
-      const canvasRatio = canvas.height / canvas.width;
-      const pageRatio = availableHeight / availableWidth;
+      // Processar cada página separadamente
+      for (let i = 0; i < resumePages.length; i++) {
+        const page = resumePages[i] as HTMLElement;
+        
+        // Aplicar estilos temporários para remover bordas e garantir proporções corretas
+        const originalBorder = page.style.border;
+        const originalBorderRadius = page.style.borderRadius;
+        const originalBoxShadow = page.style.boxShadow;
+        
+        // Remover bordas visíveis
+        page.style.border = 'none';
+        page.style.borderRadius = '0';
+        page.style.boxShadow = 'none';
+        
+        // Pré-processar elementos para melhorar renderização
+        const iconElements = page.querySelectorAll('.lucide');
+        const originalIconStyles: { [key: string]: {[key: string]: string} } = {};
+        
+        // Ajustar ícones para garantir alinhamento correto
+        iconElements.forEach((icon, idx) => {
+          const iconEl = icon as HTMLElement;
+          const id = `icon-${idx}`;
+          iconEl.setAttribute('data-icon-id', id);
+          
+          originalIconStyles[id] = {
+            position: iconEl.style.position,
+            margin: iconEl.style.margin,
+            verticalAlign: iconEl.style.verticalAlign,
+            transform: iconEl.style.transform,
+            display: iconEl.style.display
+          };
+          
+          // Melhoria no posicionamento dos ícones - ajuste mais significativo
+          iconEl.style.position = 'relative';
+          iconEl.style.margin = '0';
+          iconEl.style.verticalAlign = 'middle';
+          iconEl.style.transform = 'translateY(-2px)';
+          iconEl.style.display = 'inline-flex';
+        });
+        
+        // Processar capsulas (skills e technologies tags)
+        const capsules = page.querySelectorAll('.rounded-full');
+        const originalCapsuleStyles: { [key: string]: {[key: string]: string} } = {};
+        
+        capsules.forEach((capsule, idx) => {
+          const capsuleEl = capsule as HTMLElement;
+          const id = `capsule-${idx}`;
+          capsuleEl.setAttribute('data-capsule-id', id);
+          
+          originalCapsuleStyles[id] = {
+            padding: capsuleEl.style.padding,
+            margin: capsuleEl.style.margin,
+            display: capsuleEl.style.display,
+            lineHeight: capsuleEl.style.lineHeight,
+            alignItems: capsuleEl.style.alignItems,
+            justifyContent: capsuleEl.style.justifyContent,
+            textAlign: capsuleEl.style.textAlign,
+            verticalAlign: capsuleEl.style.verticalAlign
+          };
+          
+          // Normalizar a aparência das cápsulas com mais precisão
+          capsuleEl.style.padding = '0.35rem 0.75rem';
+          capsuleEl.style.margin = '0.15rem';
+          capsuleEl.style.display = 'inline-flex';
+          capsuleEl.style.lineHeight = '1.2';
+          capsuleEl.style.alignItems = 'center';
+          capsuleEl.style.justifyContent = 'center';
+          capsuleEl.style.textAlign = 'center';
+          capsuleEl.style.verticalAlign = 'middle';
+        });
+        
+        // Encontrar e corrigir a foto de perfil, se presente
+        const profilePhoto = i === 0 ? page.querySelector('.w-24.h-24.rounded-full') : null;
+        let originalPhotoStyles = {};
+        
+        if (profilePhoto) {
+          originalPhotoStyles = {
+            borderRadius: (profilePhoto as HTMLElement).style.borderRadius,
+            border: (profilePhoto as HTMLElement).style.border,
+            overflow: (profilePhoto as HTMLElement).style.overflow,
+            width: (profilePhoto as HTMLElement).style.width,
+            height: (profilePhoto as HTMLElement).style.height,
+            display: (profilePhoto as HTMLElement).style.display,
+            alignItems: (profilePhoto as HTMLElement).style.alignItems,
+            justifyContent: (profilePhoto as HTMLElement).style.justifyContent
+          };
+          
+          // Garantir proporções corretas da foto
+          (profilePhoto as HTMLElement).style.borderRadius = '50%';
+          (profilePhoto as HTMLElement).style.border = 'none';
+          (profilePhoto as HTMLElement).style.overflow = 'hidden';
+          (profilePhoto as HTMLElement).style.width = '144px';
+          (profilePhoto as HTMLElement).style.height = '144px';
+          (profilePhoto as HTMLElement).style.display = 'flex';
+          (profilePhoto as HTMLElement).style.alignItems = 'center';
+          (profilePhoto as HTMLElement).style.justifyContent = 'center';
+          
+          // Garantir que a imagem dentro da div tenha aspect ratio 1:1
+          const profileImg = profilePhoto.querySelector('img');
+          if (profileImg) {
+            const originalImgStyles = {
+              objectFit: (profileImg as HTMLElement).style.objectFit,
+              width: (profileImg as HTMLElement).style.width,
+              height: (profileImg as HTMLElement).style.height,
+              display: (profileImg as HTMLElement).style.display,
+              borderRadius: (profileImg as HTMLElement).style.borderRadius,
+              maxWidth: (profileImg as HTMLElement).style.maxWidth,
+              maxHeight: (profileImg as HTMLElement).style.maxHeight,
+              position: (profileImg as HTMLElement).style.position
+            };
+            
+            (profileImg as HTMLElement).style.objectFit = 'cover';
+            (profileImg as HTMLElement).style.width = '100%';
+            (profileImg as HTMLElement).style.height = '100%';
+            (profileImg as HTMLElement).style.display = 'block';
+            (profileImg as HTMLElement).style.borderRadius = '50%';
+            (profileImg as HTMLElement).style.maxWidth = '100%';
+            (profileImg as HTMLElement).style.maxHeight = '100%';
+            (profileImg as HTMLElement).style.position = 'relative';
+            
+            // Restaurar depois da captura
+            setTimeout(() => {
+              if (profileImg) {
+                (profileImg as HTMLElement).style.objectFit = originalImgStyles.objectFit;
+                (profileImg as HTMLElement).style.width = originalImgStyles.width;
+                (profileImg as HTMLElement).style.height = originalImgStyles.height;
+                (profileImg as HTMLElement).style.display = originalImgStyles.display;
+                (profileImg as HTMLElement).style.borderRadius = originalImgStyles.borderRadius;
+                (profileImg as HTMLElement).style.maxWidth = originalImgStyles.maxWidth;
+                (profileImg as HTMLElement).style.maxHeight = originalImgStyles.maxHeight;
+                (profileImg as HTMLElement).style.position = originalImgStyles.position;
+              }
+            }, 500);
+          }
+        }
+        
+        // Se não for a primeira página, adicione uma nova página ao PDF
+        if (i > 0) {
+          pdf.addPage();
+        }
 
-      let imgWidth, imgHeight, x, y;
+        // Capturar a página atual com configurações otimizadas
+        const canvas = await html2canvas(page, {
+          scale: 4, // Alta qualidade
+        useCORS: true,
+        allowTaint: true,
+          backgroundColor: '#ffffff',
+        logging: false,
+          windowWidth: 210 * 3.78, // Aproximadamente 210mm em pixels
+          windowHeight: 297 * 3.78, // Aproximadamente 297mm em pixels
+        ignoreElements: (element) => {
+          return element.classList?.contains('debug-element') || 
+                 element.classList?.contains('mobile-menu') ||
+                 element.classList?.contains('mobile-menu-overlay') || 
+                 false;
+          },
+          onclone: (clonedDoc) => {
+            // Estilos adicionais para o documento clonado
+            const clonedPage = clonedDoc.querySelector('.resume-paper');
+            if (clonedPage) {
+              (clonedPage as HTMLElement).style.boxShadow = 'none';
+              (clonedPage as HTMLElement).style.border = 'none';
+              (clonedPage as HTMLElement).style.borderRadius = '0';
+            }
+          }
+        });
+        
+        // Restaurar estilos originais da página
+        page.style.border = originalBorder;
+        page.style.borderRadius = originalBorderRadius;
+        page.style.boxShadow = originalBoxShadow;
+        
+        // Restaurar estilos dos ícones
+        iconElements.forEach((icon) => {
+          const iconEl = icon as HTMLElement;
+          const id = iconEl.getAttribute('data-icon-id');
+          if (id && originalIconStyles[id]) {
+            iconEl.style.position = originalIconStyles[id].position;
+            iconEl.style.margin = originalIconStyles[id].margin;
+            iconEl.style.verticalAlign = originalIconStyles[id].verticalAlign;
+            iconEl.style.transform = originalIconStyles[id].transform;
+            iconEl.style.display = originalIconStyles[id].display;
+            iconEl.removeAttribute('data-icon-id');
+          }
+        });
+        
+        // Restaurar estilos das cápsulas
+        capsules.forEach((capsule) => {
+          const capsuleEl = capsule as HTMLElement;
+          const id = capsuleEl.getAttribute('data-capsule-id');
+          if (id && originalCapsuleStyles[id]) {
+            capsuleEl.style.padding = originalCapsuleStyles[id].padding;
+            capsuleEl.style.margin = originalCapsuleStyles[id].margin;
+            capsuleEl.style.display = originalCapsuleStyles[id].display;
+            capsuleEl.style.lineHeight = originalCapsuleStyles[id].lineHeight;
+            capsuleEl.style.alignItems = originalCapsuleStyles[id].alignItems;
+            capsuleEl.style.justifyContent = originalCapsuleStyles[id].justifyContent;
+            capsuleEl.style.textAlign = originalCapsuleStyles[id].textAlign;
+            capsuleEl.style.verticalAlign = originalCapsuleStyles[id].verticalAlign;
+            capsuleEl.removeAttribute('data-capsule-id');
+          }
+        });
+        
+        // Restaurar estilos originais da foto de perfil
+        if (profilePhoto) {
+          const photoStyles = originalPhotoStyles as {[key: string]: string};
+          (profilePhoto as HTMLElement).style.borderRadius = photoStyles.borderRadius || '';
+          (profilePhoto as HTMLElement).style.border = photoStyles.border || '';
+          (profilePhoto as HTMLElement).style.overflow = photoStyles.overflow || '';
+          (profilePhoto as HTMLElement).style.width = photoStyles.width || '';
+          (profilePhoto as HTMLElement).style.height = photoStyles.height || '';
+          (profilePhoto as HTMLElement).style.display = photoStyles.display || '';
+          (profilePhoto as HTMLElement).style.alignItems = photoStyles.alignItems || '';
+          (profilePhoto as HTMLElement).style.justifyContent = photoStyles.justifyContent || '';
+        }
+
+        // Converter para imagem
+        const imgData = canvas.toDataURL('image/png', 1.0);
+
+        // Calcular dimensões - usar a página inteira para evitar bordas
+        const imgWidth = availableWidth;
+        const imgHeight = availableHeight;
+        const x = margin;
+        const y = margin;
+
+        // Adicionar a imagem na página atual do PDF
+        pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight, undefined, 'FAST');
+      }
       
-      if (canvasRatio > pageRatio) {
-        // Conteúdo é mais alto - ajustar pela altura disponível
-        imgHeight = availableHeight;
-        imgWidth = imgHeight / canvasRatio;
-        x = margin + (availableWidth - imgWidth) / 2;
-        y = margin;
-      } else {
-        // Conteúdo é mais largo - ajustar pela largura disponível
-        imgWidth = availableWidth;
-        imgHeight = imgWidth * canvasRatio;
-        x = margin;
-        y = margin + (availableHeight - imgHeight) / 2;
+      // Restaurar tema original se necessário
+      if (originalTheme) {
+        resumeContainer.classList.add('dark-theme');
+        resumeContainer.querySelectorAll('[data-original-classes]')
+          .forEach(element => {
+            const el = element as HTMLElement;
+            if (el.dataset.originalClasses) {
+              el.className = el.dataset.originalClasses;
+              delete el.dataset.originalClasses;
+            }
+          });
       }
 
-      // Se ainda assim o conteúdo for muito grande, forçar para ocupar toda a área
-      if (imgWidth < availableWidth * 0.9 && imgHeight < availableHeight * 0.9) {
-        const scaleUpFactor = Math.min(
-          (availableWidth * 0.95) / imgWidth,
-          (availableHeight * 0.95) / imgHeight
-        );
-        imgWidth *= scaleUpFactor;
-        imgHeight *= scaleUpFactor;
-        x = margin + (availableWidth - imgWidth) / 2;
-        y = margin + (availableHeight - imgHeight) / 2;
-      }
-
-      // Adicionar a imagem ocupando o máximo possível da página
-      pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight, undefined, 'FAST');
+      // Restaurar estilos originais
+      resumeContainer.style.transform = originalTransform;
+      resumeContainer.style.marginBottom = originalMarginBottom;
+      resumeContainer.style.transition = originalTransition;
+      resumeContainer.classList.remove('pdf-render');
 
       // Gerar nome do arquivo com data/hora
       const now = new Date();
@@ -395,18 +527,17 @@ export default function Index() {
       // Fazer download do PDF
       pdf.save(fileName);
 
-      // Mostrar sucesso
+      // Mostrar mensagem de sucesso
       dialog.showSuccess(
-        "PDF Gerado!",
-        `O arquivo "${fileName}" foi baixado com sucesso. O PDF está em formato A4 com fundo branco profissional.`,
+        "PDF gerado com sucesso!",
+        `O arquivo "${fileName}" foi salvo na pasta de downloads.`,
         3000
       );
-
     } catch (error) {
-      console.error('Erro ao gerar PDF:', error);
+      console.error("Erro ao gerar PDF:", error);
       dialog.showError(
-        "Erro ao Gerar PDF",
-        "Ocorreu um erro ao gerar o PDF. Tente novamente."
+        "Erro ao gerar PDF",
+        "Não foi possível criar o arquivo PDF. Por favor, tente novamente."
       );
     }
   };
@@ -432,7 +563,6 @@ export default function Index() {
       <div className={`relative z-10 ${isDarkTheme ? 'bg-gray-900/95' : 'bg-gray-200'} backdrop-blur-sm min-h-screen`}>
         <div className="px-1 py-0 sm:py-1 md:py-1 lg:py-2 sm:px-1.5 md:px-2 no-print">
           <TopBar 
-            onPrint={handlePrint} 
             onEdit={handleEditToggle}
             onDownloadPDF={handleDownloadPDF}
             isEditing={isEditing}

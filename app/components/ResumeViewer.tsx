@@ -1,6 +1,6 @@
 import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
 import type { Resume, Experience, Education, Project, Skill } from '~/types';
-import { Github, Mail, Phone, MapPin, Globe, Palette, Image, Upload, User } from 'lucide-react';
+import { Github, Mail, Phone, MapPin, Globe, Palette, Image, Upload, User, DollarSign, CheckCircle } from 'lucide-react';
 import EditableField from "./EditableField";
 
 // Hook que usa useLayoutEffect no cliente e useEffect no servidor
@@ -182,12 +182,13 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
     
     const width = window.innerWidth;
     
-    if (width <= 420) return 0.4;
-    if (width <= 520) return 0.45;
-    if (width <= 639) return 0.55;
-    if (width <= 767) return 0.65;
-    if (width <= 899) return 0.75;
-    if (width <= 1023) return 0.85;
+    // Escala adaptada para telas estreitas
+    if (width <= 420) return 0.45;
+    if (width <= 520) return 0.52;
+    if (width <= 639) return 0.6;
+    if (width <= 767) return 0.7;
+    if (width <= 899) return 0.8;
+    if (width <= 1023) return 0.9;
     return 1;
   }
 
@@ -248,10 +249,21 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
       const idx = parseInt(index);
       
       if (!isNaN(idx) && idx >= 0 && idx < updatedResume.experiences.length) {
-        updatedResume.experiences[idx] = { 
-          ...updatedResume.experiences[idx], 
-          [subfield]: value 
-        };
+        if (subfield === 'technologies') {
+          // Caso especial para o array de tecnologias
+          if (Array.isArray(value)) {
+            // Quando recebemos diretamente um array (para adicionar/remover)
+            updatedResume.experiences[idx].technologies = value;
+          } else {
+            // Caso tradicional de string separada por vírgula
+            updatedResume.experiences[idx].technologies = value.split(',').map((t: string) => t.trim());
+          }
+        } else {
+          updatedResume.experiences[idx] = { 
+            ...updatedResume.experiences[idx], 
+            [subfield]: value 
+          };
+        }
       }
     } else if (section === 'education') {
       // Suporte à edição de educação
@@ -271,7 +283,10 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
       const itemIdx = parseInt(itemIndex);
       
       if (!isNaN(catIdx) && catIdx >= 0 && catIdx < updatedResume.skills.length) {
-        if (itemIdx === -1) {
+        if (itemIndex === 'items') {
+          // Atualização do array de items completo
+          updatedResume.skills[catIdx].items = value;
+        } else if (itemIdx === -1) {
           // Edição do nome da categoria
           updatedResume.skills[catIdx].category = value;
         } else if (!isNaN(itemIdx) && itemIdx >= 0 && itemIdx < updatedResume.skills[catIdx].items.length) {
@@ -289,7 +304,13 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
       if (!isNaN(idx) && idx >= 0 && idx < updatedResume.projects.length) {
         if (subfield === 'technologies') {
           // Caso especial para o array de tecnologias
-          updatedResume.projects[idx].technologies = value.split(',').map((t: string) => t.trim());
+          if (Array.isArray(value)) {
+            // Quando recebemos diretamente um array (para adicionar/remover)
+            updatedResume.projects[idx].technologies = value;
+          } else {
+            // Caso tradicional de string separada por vírgula
+            updatedResume.projects[idx].technologies = value.split(',').map((t: string) => t.trim());
+          }
         } else {
           updatedResume.projects[idx] = { 
             ...updatedResume.projects[idx], 
@@ -395,25 +416,42 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
         />
         <div className="flex flex-wrap gap-2">
           {exp.technologies.map((tech, techIndex) => (
-            <EditableField
-              key={techIndex}
-              value={tech}
-              onSave={(value) => {
-                const updatedTechnologies = [...exp.technologies];
-                updatedTechnologies[techIndex] = value;
-                handleFieldUpdate('experiences', `${index}.technologies`, updatedTechnologies);
-              }}
-              isEditing={isEditing}
-              isDarkTheme={isDarkTheme}
-              className={`px-3 py-1 text-xs font-medium rounded-full ${
-                isDarkTheme ? 'text-white print:text-black' : 'text-black'
-              }`}
-              style={{ 
-                backgroundColor: selectedTheme.colors.background,
-                color: selectedTheme.colors.secondary 
-              }}
-              placeholder={`Tecnologia ${techIndex + 1}`}
-            />
+            <div key={techIndex} className="flex items-center group relative">
+              <EditableField
+                key={techIndex}
+                value={tech}
+                onSave={(value) => {
+                  const updatedTechnologies = [...exp.technologies];
+                  updatedTechnologies[techIndex] = value;
+                  handleFieldUpdate('experiences', `${index}.technologies`, updatedTechnologies);
+                }}
+                isEditing={isEditing}
+                isDarkTheme={isDarkTheme}
+                className={`px-3 py-1 text-xs font-medium rounded-full overflow-hidden whitespace-normal break-words max-w-full ${
+                  isDarkTheme ? 'text-white print:text-black' : 'text-black'
+                }`}
+                style={{ 
+                  backgroundColor: selectedTheme.colors.background,
+                  color: selectedTheme.colors.secondary,
+                  padding: '0.35rem 0.75rem',
+                  lineHeight: '1.2'
+                }}
+                placeholder={`Tecnologia ${techIndex + 1}`}
+              />
+              {isEditing && (
+                <button
+                  onClick={() => {
+                    const updatedTechnologies = [...exp.technologies];
+                    updatedTechnologies.splice(techIndex, 1);
+                    handleFieldUpdate('experiences', `${index}.technologies`, updatedTechnologies);
+                  }}
+                  className="absolute -right-2 -top-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                  title="Remover tecnologia"
+                >
+                  ×
+                </button>
+              )}
+            </div>
           ))}
           {isEditing && (
             <button 
@@ -528,21 +566,40 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
         />
         <div className="flex flex-wrap gap-2">
           {skillGroup.items.map((skill, skillIndex) => (
-            <EditableField
-              key={skillIndex}
-              value={skill}
-              onSave={(value) => handleFieldUpdate('skills', `${index}.${skillIndex}`, value)}
-              isEditing={isEditing}
-              isDarkTheme={isDarkTheme}
-              className={`px-3 py-1 text-sm font-medium rounded-full ${
-                isDarkTheme ? 'bg-gray-600 text-white print:text-gray-800' : 'text-gray-800'
-              }`}
-              style={{ 
-                backgroundColor: selectedTheme.colors.background,
-                color: selectedTheme.colors.secondary 
-              }}
-              placeholder={`Habilidade ${skillIndex + 1}`}
-            />
+            <div key={skillIndex} className="flex items-center group relative">
+              <EditableField
+                value={skill}
+                onSave={(value) => handleFieldUpdate('skills', `${index}.${skillIndex}`, value)}
+                isEditing={isEditing}
+                isDarkTheme={isDarkTheme}
+                className={`px-3 py-1 text-sm font-medium rounded-full overflow-hidden whitespace-normal break-words max-w-full ${
+                  isDarkTheme ? 'bg-gray-600 text-white print:text-gray-800' : 'text-gray-800'
+                }`}
+                style={{ 
+                  backgroundColor: selectedTheme.colors.background,
+                  color: selectedTheme.colors.secondary,
+                  padding: '0.35rem 0.75rem',
+                  lineHeight: '1.2',
+                  display: 'inline-block',
+                  verticalAlign: 'middle',
+                  textAlign: 'center'
+                }}
+                placeholder={`Habilidade ${skillIndex + 1}`}
+              />
+              {isEditing && (
+                <button
+                  onClick={() => {
+                    const updatedItems = [...skillGroup.items];
+                    updatedItems.splice(skillIndex, 1);
+                    handleFieldUpdate('skills', `${index}.items`, updatedItems);
+                  }}
+                  className="absolute -right-2 -top-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                  title="Remover habilidade"
+                >
+                  ×
+                </button>
+              )}
+            </div>
           ))}
           {isEditing && (
             <button 
@@ -591,14 +648,6 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                   className="p-1 rounded transition-colors"
                   placeholder="URL do GitHub"
                 />
-                <EditableField
-                  value={project.demoUrl || ''}
-                  onSave={(value) => handleFieldUpdate('projects', `${index}.demoUrl`, value || undefined)}
-                  isEditing={isEditing}
-                  isDarkTheme={isDarkTheme}
-                  className="p-1 rounded transition-colors"
-                  placeholder="URL da Demo"
-                />
               </>
             ) : (
               <>
@@ -611,17 +660,6 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                     style={{ color: selectedTheme.colors.primary }}
                   >
                     <Github size={16} />
-                  </a>
-                )}
-                {project.demoUrl && (
-                  <a
-                    href={project.demoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-1 rounded transition-colors"
-                    style={{ color: selectedTheme.colors.primary }}
-                  >
-                    <Globe size={16} />
                   </a>
                 )}
               </>
@@ -639,25 +677,42 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
         />
         <div className="flex flex-wrap gap-2">
           {project.technologies.map((tech, techIndex) => (
-            <EditableField
-              key={techIndex}
-              value={tech}
-              onSave={(value) => {
-                const updatedTechnologies = [...project.technologies];
-                updatedTechnologies[techIndex] = value;
-                handleFieldUpdate('projects', `${index}.technologies`, updatedTechnologies);
-              }}
-              isEditing={isEditing}
-              isDarkTheme={isDarkTheme}
-              className={`px-3 py-1 text-xs font-medium rounded-full ${
-                isDarkTheme ? 'text-white print:text-black' : 'text-black'
-              }`}
-              style={{ 
-                backgroundColor: selectedTheme.colors.background,
-                color: selectedTheme.colors.secondary 
-              }}
-              placeholder={`Tecnologia ${techIndex + 1}`}
-            />
+            <div key={techIndex} className="flex items-center group relative">
+              <EditableField
+                key={techIndex}
+                value={tech}
+                onSave={(value) => {
+                  const updatedTechnologies = [...project.technologies];
+                  updatedTechnologies[techIndex] = value;
+                  handleFieldUpdate('projects', `${index}.technologies`, updatedTechnologies);
+                }}
+                isEditing={isEditing}
+                isDarkTheme={isDarkTheme}
+                className={`px-3 py-1 text-xs font-medium rounded-full overflow-hidden whitespace-normal break-words max-w-full ${
+                  isDarkTheme ? 'text-white print:text-black' : 'text-black'
+                }`}
+                style={{ 
+                  backgroundColor: selectedTheme.colors.background,
+                  color: selectedTheme.colors.secondary,
+                  padding: '0.35rem 0.75rem',
+                  lineHeight: '1.2'
+                }}
+                placeholder={`Tecnologia ${techIndex + 1}`}
+              />
+              {isEditing && (
+                <button
+                  onClick={() => {
+                    const updatedTechnologies = [...project.technologies];
+                    updatedTechnologies.splice(techIndex, 1);
+                    handleFieldUpdate('projects', `${index}.technologies`, updatedTechnologies);
+                  }}
+                  className="absolute -right-2 -top-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                  title="Remover tecnologia"
+                >
+                  ×
+                </button>
+              )}
+            </div>
           ))}
           {isEditing && (
             <button 
@@ -879,7 +934,10 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
             transform: `scale(${currentScale})`,
             transformOrigin: "top center",
             marginBottom: `${marginBottom}px`,
-            transition: "transform 0.3s ease-in-out, margin-bottom 0.3s ease-in-out"
+            transition: "transform 0.3s ease-in-out, margin-bottom 0.3s ease-in-out",
+            width: "210mm",  // Largura exata A4
+            maxWidth: "100%",
+            margin: "0 auto"
           }}
           ref={containerRef}
         >
@@ -903,17 +961,17 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
               } as React.CSSProperties}
             >
               {/* Foto de Perfil */}
-              <div className="absolute top-8 left-8 w-24 h-24 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center border-4" 
+              <div className="absolute top-8 left-8 w-36 h-36 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center border-4" 
                    style={{ borderColor: selectedTheme.colors.primary }}>
                 {profilePhoto ? (
                   <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
-                  <User size={32} className="text-gray-400" />
+                  <User size={48} className="text-gray-400" />
                 )}
               </div>
 
               {/* Cabeçalho */}
-              <header className="mb-8 text-center border-b-2 pb-6 ml-32" style={{ borderColor: selectedTheme.colors.border }}>
+              <header className="mb-8 text-center border-b-2 pb-6 ml-40" style={{ borderColor: selectedTheme.colors.border }}>
                 <EditableField
                   value={currentData.personalInfo.name}
                   onSave={(value) => handleFieldUpdate('personalInfo', 'name', value)}
@@ -934,7 +992,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                 {/* Informações de Contato */}
                 <div className="flex flex-wrap justify-center gap-4 mt-4 text-sm">
                   <div className="flex items-center gap-2">
-                    <Mail size={16} style={{ color: selectedTheme.colors.primary }} />
+                    <Mail size={16} className="flex-shrink-0 translate-y-[0px] inline-block align-middle" style={{ color: selectedTheme.colors.primary }} />
                     <EditableField
                       value={currentData.personalInfo.email}
                       onSave={(value) => handleFieldUpdate('personalInfo', 'email', value)}
@@ -946,7 +1004,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Phone size={16} style={{ color: selectedTheme.colors.primary }} />
+                    <Phone size={16} className="flex-shrink-0 translate-y-[0px] inline-block align-middle" style={{ color: selectedTheme.colors.primary }} />
                     <EditableField
                       value={currentData.personalInfo.phone}
                       onSave={(value) => handleFieldUpdate('personalInfo', 'phone', value)}
@@ -958,7 +1016,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <MapPin size={16} style={{ color: selectedTheme.colors.primary }} />
+                    <MapPin size={16} className="flex-shrink-0 translate-y-[0px] inline-block align-middle" style={{ color: selectedTheme.colors.primary }} />
                     <EditableField
                       value={currentData.personalInfo.location}
                       onSave={(value) => handleFieldUpdate('personalInfo', 'location', value)}
@@ -969,15 +1027,84 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Github size={16} style={{ color: selectedTheme.colors.primary }} />
+                    <Globe size={16} className="flex-shrink-0 translate-y-[0px] inline-block align-middle" style={{ color: selectedTheme.colors.primary }} />
                     <EditableField
                       value={currentData.personalInfo.githubUrl}
                       onSave={(value) => handleFieldUpdate('personalInfo', 'githubUrl', value)}
                       isEditing={isEditing}
                       isDarkTheme={isDarkTheme}
                       className={isDarkTheme ? 'text-gray-300 print:text-gray-700' : 'text-gray-700'}
-                      placeholder="https://github.com/seuusuario"
+                      placeholder="https://seu-site.com"
                     />
+                  </div>
+                </div>
+                
+                <div className="flex flex-wrap justify-center items-center gap-4 mt-4">
+                  <div className="flex items-center gap-2">
+                    <DollarSign size={16} className="flex-shrink-0 translate-y-[0px] inline-block align-middle" style={{ color: selectedTheme.colors.primary }} />
+                    <EditableField
+                      value={currentData.personalInfo.salary || ''}
+                      onSave={(value) => handleFieldUpdate('personalInfo', 'salary', value || undefined)}
+                      isEditing={isEditing}
+                      isDarkTheme={isDarkTheme}
+                      className={`${isDarkTheme ? 'text-gray-300 print:text-gray-700' : 'text-gray-700'}`}
+                      placeholder="Expectativa Salarial"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle 
+                      size={16} 
+                      className="flex-shrink-0 translate-y-[0px] inline-block align-middle"
+                      style={{ 
+                        color: currentData.personalInfo.acceptingOffers 
+                          ? selectedTheme.colors.primary 
+                          : isDarkTheme ? '#4B5563' : '#9CA3AF'
+                      }} 
+                    />
+                    <div className="flex items-center gap-2">
+                      <span className={`text-sm ${isDarkTheme ? 'text-gray-300 print:text-gray-700' : 'text-gray-700'}`}>
+                        Aceito Propostas
+                      </span>
+                      {isEditing && (
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-1">
+                            <input 
+                              type="radio" 
+                              id="acceptYes" 
+                              name="acceptingOffers" 
+                              checked={!!currentData.personalInfo.acceptingOffers}
+                              onChange={() => handleFieldUpdate('personalInfo', 'acceptingOffers', true)}
+                              className="h-4 w-4 cursor-pointer accent-blue-500"
+                            />
+                            <label htmlFor="acceptYes" className={`text-sm cursor-pointer ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
+                              Sim
+                            </label>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <input 
+                              type="radio" 
+                              id="acceptNo" 
+                              name="acceptingOffers" 
+                              checked={!currentData.personalInfo.acceptingOffers}
+                              onChange={() => handleFieldUpdate('personalInfo', 'acceptingOffers', false)}
+                              className="h-4 w-4 cursor-pointer accent-blue-500"
+                            />
+                            <label htmlFor="acceptNo" className={`text-sm cursor-pointer ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
+                              Não
+                            </label>
+                          </div>
+                        </div>
+                      )}
+                      {!isEditing && (
+                        <span className={`text-xs px-2 py-0.5 rounded ${
+                          currentData.personalInfo.acceptingOffers
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {currentData.personalInfo.acceptingOffers ? 'Sim' : 'Não'}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </header>
@@ -1011,18 +1138,6 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                   {renderExperiences()}
                 </div>
               </section>
-
-              {/* Educação */}
-              <section className="mb-8">
-                <h2 className={`text-2xl font-bold mb-4 border-b-2 pb-2 ${
-                  isDarkTheme ? 'text-white print:text-gray-900' : 'text-gray-900'
-                }`} style={{ borderColor: selectedTheme.colors.primary }}>
-                  Formação Acadêmica
-                </h2>
-                <div className="space-y-4">
-                  {renderEducation()}
-                </div>
-              </section>
             </div>
 
             {/* Segunda Página */}
@@ -1034,6 +1149,18 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
               }`}
               style={getWallpaperStyle()}
             >
+              {/* Educação */}
+              <section className="mb-8">
+                <h2 className={`text-2xl font-bold mb-4 border-b-2 pb-2 ${
+                  isDarkTheme ? 'text-white print:text-gray-900' : 'text-gray-900'
+                }`} style={{ borderColor: selectedTheme.colors.primary }}>
+                  Formação Acadêmica
+                </h2>
+                <div className="space-y-4">
+                  {renderEducation()}
+                </div>
+              </section>
+              
               {/* Habilidades Técnicas */}
               <section className="mb-8">
                 <h2 className={`text-2xl font-bold mb-4 border-b-2 pb-2 ${

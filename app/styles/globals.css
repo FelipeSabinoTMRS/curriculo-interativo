@@ -6,6 +6,29 @@
   body {
     @apply bg-gray-100 text-gray-900 font-sans antialiased;
   }
+  
+  /* Melhorias para renderização dos ícones e etiquetas */
+  .lucide {
+    vertical-align: middle;
+    display: inline-block;
+  }
+  
+  .rounded-full {
+    vertical-align: middle;
+    padding: 0.35rem 0.75rem;
+    line-height: 1.2;
+  }
+  
+  /* Melhoria específica para PDF */
+  .pdf-render .lucide {
+    transform: translateY(-1px);
+  }
+  
+  .pdf-render .rounded-full {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 @layer components {
@@ -156,6 +179,14 @@
   .mobile-menu.open {
     transform: translateX(0);
     display: block;
+  }
+  
+  .mobile-menu.editing {
+    box-shadow: -4px 0 20px rgba(234, 179, 8, 0.3);
+  }
+  
+  .mobile-menu.editing.dark {
+    box-shadow: -4px 0 20px rgba(234, 179, 8, 0.5);
   }
   
   /* Botões estilo sóbrio */

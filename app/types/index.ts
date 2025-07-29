@@ -7,6 +7,8 @@ export interface PersonalInfo {
   githubUrl: string;
   linkedinUrl: string;
   summary: string;
+  salary?: string;
+  acceptingOffers?: boolean;
 }
 
 export interface Experience {
