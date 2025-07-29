@@ -1,135 +1,235 @@
-# Currículo Desenvolvido do Zero 💙
+# 📄 Currículo Interativo
 
-Um sistema interativo de currículo desenvolvido com tecnologias modernas para demonstrar competências técnicas aos recrutadores.
+Um sistema de currículo moderno, responsivo e interativo desenvolvido com **Remix**, **Cloudflare Workers**, **D1 Database** e **R2 Storage**.
 
-## 🚀 Sobre o Projeto
+## ✨ Funcionalidades
 
-Este projeto foi criado para mostrar aos recrutadores que o currículo não é apenas um PDF estático, mas sim uma aplicação web completa desenvolvida do zero. O sistema permite:
+### 🎨 **Interface e Experiência**
+- ✅ **Responsive Design** - Adaptação automática para diferentes tamanhos de tela
+- ✅ **Tema Claro/Escuro** - Chave animada moderna estilo IA
+- ✅ **Impressão Otimizada** - Layout A4 perfeito para impressão
+- ✅ **Escalamento Inteligente** - Zoom automático baseado na largura da tela
+- ✅ **Debug Panel Fixo** - Painel de debug que não rola com a página
 
-- ✨ Visualização interativa do currículo
-- 🖼️ Gerenciamento de imagens de perfil e fundo (em desenvolvimento)
-- 🎨 Interface moderna com design inspirado em IA
-- 🖨️ Impressão otimizada para PDF
-- 🔧 Painel de debug para mostrar integração com banco de dados
-- 📱 Design responsivo
+### 📝 **Sistema de Edição**
+- ✅ **Edição Local** - Edite textos diretamente na interface
+- ✅ **Campos Editáveis** - Clique para editar qualquer campo
+- ✅ **Indicador de Alterações** - Visual feedback para alterações não salvas
+- ✅ **Dialogs Flutuantes** - Sistema moderno de notificações
+- ✅ **Salvamento com Senha** - Proteção para alterações permanentes
 
-## 🛠️ Tecnologias Utilizadas
+### ☁️ **Infraestrutura Cloudflare**
+- ✅ **D1 Database** - Banco SQL serverless para dados do currículo
+- ✅ **R2 Storage** - Armazenamento de imagens e arquivos
+- ✅ **Workers** - API serverless com alta performance
+- ✅ **Pages Deploy** - Deploy automático e CDN global
 
-- **Frontend**: [React Router](https://reactrouter.com/) v7 + TypeScript
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Database**: [Cloudflare D1](https://developers.cloudflare.com/d1/) (configuração pendente)
-- **Storage**: [Cloudflare R2](https://developers.cloudflare.com/r2/) (configuração pendente)
-- **Deploy**: [Cloudflare Pages](https://pages.cloudflare.com/)
-- **Icons**: [Lucide React](https://lucide.dev/)
+### 🔧 **Recursos Técnicos**
+- ✅ **TypeScript** - Tipagem completa e robusta
+- ✅ **Tailwind CSS** - Estilização utilitária e responsiva
+- ✅ **React Hooks** - Estado e efeitos modernos
+- ✅ **API RESTful** - Endpoints organizados para todas as funcionalidades
 
-## 🎨 Design
+## 🚀 Deploy Rápido
 
-O design utiliza um esquema de cores azul inspirado em inteligência artificial, com:
-- Gradientes suaves
-- Transparências e blur effects
-- Animações fluidas
-- Layout responsivo com currículo centralizado
-- Painéis laterais para controles e gerenciamento
-
-## 📋 Funcionalidades
-
-### ✅ Implementadas
-- Layout responsivo com design IA
-- Visualização de currículo estilo papel A4
-- Painel de controles laterais
-- Debug panel para status do sistema
-- Impressão otimizada (Ctrl+P)
-- TypeScript completo
-- Tailwind CSS com tema personalizado
-
-### 🚧 Em Desenvolvimento
-- Integração com Cloudflare D1
-- Sistema de upload de imagens com R2
-- Modo de edição do currículo
-- Persistência de dados
-
-## 🚦 Como Executar
-
-### Pré-requisitos
-- Node.js 18+
-- npm ou yarn
-
-### Instalação
-
-1. Clone o repositório:
+### 1. **Configuração Cloudflare**
 ```bash
+# Instalar Wrangler (se não tiver)
+npm install -g wrangler
+
+# Login no Cloudflare
+npm run cf:login
+
+# Configurar recursos automaticamente
+npm run setup:cloudflare
+```
+
+### 2. **Banco de Dados**
+```bash
+# Criar banco D1
+npm run db:create
+
+# Executar migrações
+npm run db:migrate
+
+# Verificar dados
+npm run db:studio
+```
+
+### 3. **Deploy**
+```bash
+# Build e deploy
+npm run build
+npm run deploy
+
+# Ou preview
+npm run deploy:preview
+```
+
+## 🛠️ Desenvolvimento Local
+
+### **Pré-requisitos**
+- Node.js 18+
+- Conta Cloudflare (gratuita)
+- Wrangler CLI
+
+### **Instalação**
+```bash
+# Clonar repositório
 git clone https://github.com/FelipeSabinoTMRS/curriculo-interativo.git
 cd curriculo-interativo
-```
 
-2. Instale as dependências:
-```bash
+# Instalar dependências
 npm install
-```
 
-3. Execute em desenvolvimento:
-```bash
+# Configurar Cloudflare
+npm run setup:cloudflare
+
+# Executar desenvolvimento
 npm run dev
 ```
 
-### Build para produção
-
-```bash
-npm run build
-```
-
-### Deploy para Cloudflare Pages
-
-```bash
-npm run deploy
-```
-
-## 📊 Estrutura do Projeto
-
+### **Estrutura do Projeto**
 ```
 curriculo-interativo/
-├── app/
-│   ├── components/          # Componentes React
-│   │   ├── ResumeViewer.tsx
-│   │   ├── ControlPanel.tsx
-│   │   └── DebugPanel.tsx
-│   ├── routes/              # Rotas do React Router
-│   │   └── _index.tsx
-│   ├── styles/              # Estilos CSS
-│   │   └── globals.css
-│   ├── types/               # Tipos TypeScript
-│   │   └── index.ts
-│   └── root.tsx
-├── functions/               # Cloudflare Functions
-├── public/                  # Arquivos estáticos
-└── package.json
+├── app/                     # Aplicação Remix
+│   ├── components/         # Componentes React
+│   │   ├── ResumeViewer.tsx   # Visualizador editável
+│   │   ├── TopBar.tsx         # Barra superior
+│   │   ├── DebugPanel.tsx     # Painel de debug
+│   │   └── Dialog.tsx         # Sistema de dialogs
+│   ├── services/           # Serviços de integração
+│   │   ├── database.ts        # Serviço D1
+│   │   └── storage.ts         # Serviço R2
+│   ├── hooks/              # Hooks customizados
+│   │   └── useDialog.ts       # Hook para dialogs
+│   └── types/              # Definições TypeScript
+├── functions/              # Cloudflare Workers
+│   └── [[path]].ts           # Worker principal
+├── database/               # Scripts de banco
+│   ├── schema.sql            # Schema D1
+│   └── migrate.js            # Script de migração
+├── scripts/                # Scripts de automação
+│   └── setup-cloudflare.sh   # Setup automático
+└── wrangler.toml           # Configuração Cloudflare
 ```
 
-## 💡 Conceito
+## 📋 Scripts Disponíveis
 
-Este projeto demonstra:
+### **Desenvolvimento**
+```bash
+npm run dev          # Servidor de desenvolvimento
+npm run build        # Build para produção
+npm run typecheck    # Verificação TypeScript
+```
 
-1. **Competência Técnica**: Uso de tecnologias modernas e melhores práticas
-2. **Experiência do Usuário**: Interface intuitiva e design atrativo
-3. **Arquitetura**: Estrutura de código bem organizada e escalável
-4. **Evolução Tecnológica**: Migração do Remix para React Router v7
-5. **Atenção aos Detalhes**: Funcionalidade de impressão, responsividade, etc.
+### **Cloudflare**
+```bash
+npm run deploy       # Deploy para produção
+npm run logs         # Ver logs do Worker
+npm run cf:whoami    # Verificar conta logada
+```
 
-## 🔄 Versões
+### **Banco D1**
+```bash
+npm run db:create    # Criar banco
+npm run db:migrate   # Executar migrações
+npm run db:studio    # Abrir interface do banco
+npm run db:backup    # Fazer backup
+```
 
-- **v1.0**: Implementação inicial com Remix
-- **v2.0**: Migração para React Router v7 + Cloudflare Workers template
+### **Storage R2**
+```bash
+npm run r2:create    # Criar bucket
+npm run r2:list      # Listar buckets
+```
 
-## 🔒 Privacidade
+## 🎯 Como Usar
 
-- As alterações feitas pelos recrutadores são apenas locais
-- O estado original sempre é preservado
-- Dados sensíveis não são expostos
+### **1. Modo Visualização**
+- Acesse o currículo em modo somente leitura
+- Use a chave tema para alternar claro/escuro
+- Clique em "Imprimir" para gerar PDF
 
-## 📞 Contato
+### **2. Modo Edição Local**
+- Clique em "Editar Localmente"
+- Clique em qualquer texto para editar
+- Alterações ficam apenas no navegador
+- Use "Finalizar Edição" para descartar
 
-Felipe Sabino - [GitHub](https://github.com/FelipeSabinoTMRS)
+### **3. Salvamento Permanente**
+- Após editar, clique em "Salvar Padrão"
+- Digite a senha de administrador: `teste`
+- Alterações são salvas no banco D1
+
+### **4. Debug Panel**
+- Painel fixo no canto superior direito
+- Monitora conexões D1 e R2
+- Botões para conectar/desconectar serviços
+- Informações de status em tempo real
+
+## 🔧 Configurações Avançadas
+
+### **Personalizar Senha Admin**
+Edite em `database/schema.sql`:
+```sql
+INSERT OR REPLACE INTO settings (key, value, description) VALUES 
+('admin_password_hash', 'sua_senha_aqui', 'Hash da senha de administrador');
+```
+
+### **Configurar R2 Público**
+No Cloudflare Dashboard:
+1. Vá para R2 → seu bucket
+2. Configurar → Domínio personalizado
+3. Adicionar `curriculo-images.r2.dev`
+
+### **Variáveis de Ambiente**
+Edite em `wrangler.toml`:
+```toml
+[vars]
+ENVIRONMENT = "production"
+ADMIN_EMAIL = "seu@email.com"
+```
+
+## 📊 APIs Disponíveis
+
+### **Currículo**
+- `GET /api/resume` - Buscar currículo completo
+- `GET /api/resume/personal` - Informações pessoais
+- `POST /api/resume/save` - Salvar alterações
+
+### **Storage**
+- `GET /api/r2/stats` - Estatísticas do R2
+- `POST /api/r2/upload/profile` - Upload de foto
+- `GET /api/r2/files` - Listar arquivos
+
+### **Debug**
+- `GET /api/debug/status` - Status dos serviços
+- `GET /api/health` - Saúde do Worker
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch: `git checkout -b feature/nova-funcionalidade`
+3. Commit: `git commit -m 'Adiciona nova funcionalidade'`
+4. Push: `git push origin feature/nova-funcionalidade`
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+
+## 🎯 Roadmap
+
+- [ ] **Autenticação OAuth** - Login com GitHub/Google
+- [ ] **Templates** - Múltiplos layouts de currículo
+- [ ] **Exportação** - PDF, Word, LinkedIn
+- [ ] **Analytics** - Métricas de visualização
+- [ ] **Comentários** - Sistema de feedback
+- [ ] **Versionamento** - Histórico de alterações
 
 ---
 
-*Este projeto foi desenvolvido como parte de uma estratégia inovadora para demonstrar habilidades técnicas de forma prática e interativa aos recrutadores.* 
+**Desenvolvido com ❤️ por [Felipe Sabino](https://github.com/FelipeSabinoTMRS)**
+
+🌟 **Se este projeto foi útil, deixe uma estrela!** 

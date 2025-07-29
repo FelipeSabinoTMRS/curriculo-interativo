@@ -27,10 +27,21 @@
     transition: transform 0.3s ease-in-out;
   }
   
-  /* Container responsivo para o debug panel */
+  /* Container responsivo para o debug panel - FIXO */
   .debug-panel-container {
+    position: fixed !important;
+    top: 1rem;
+    right: 1rem;
+    z-index: 50;
     transform-origin: top right;
     transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Debug panel responsivo - esconder em mobile quando houver menu */
+  @media (max-width: 768px) {
+    .debug-panel-container {
+      display: none;
+    }
   }
   
   /* Escala para debug panel em telas pequenas */
@@ -68,6 +79,143 @@
     .debug-panel-container {
       transform: scale(0.4);
     }
+  }
+
+  /* Chave do tema - Estilo sóbrio sem gradientes */
+  .theme-toggle-switch {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background: #e5e7eb; /* gray-200 */
+    border: 2px solid #d1d5db; /* gray-300 */
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .theme-toggle-switch.dark {
+    background: #374151; /* gray-700 */
+    border-color: #4b5563; /* gray-600 */
+  }
+  
+  .theme-toggle-switch::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 22px;
+    height: 22px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .theme-toggle-switch.dark::before {
+    transform: translateX(28px);
+    background: #1f2937; /* gray-800 */
+  }
+  
+  .theme-toggle-switch:hover {
+    transform: scale(1.05);
+  }
+
+  /* Menu móvel lateral */
+  .mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 50;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .mobile-menu-overlay.open {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 320px;
+    background: white;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 51;
+    overflow-y: auto;
+  }
+  
+  .mobile-menu.dark {
+    background: #1f2937;
+  }
+  
+  .mobile-menu.open {
+    transform: translateX(0);
+  }
+
+  /* Botões estilo sóbrio */
+  .btn-sober {
+    @apply p-3 rounded-lg transition-all duration-200 border;
+    background: #f9fafb;
+    border-color: #e5e7eb;
+    color: #374151;
+  }
+  
+  .btn-sober:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn-sober.active {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+  }
+  
+  .btn-sober.dark {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+  }
+  
+  .btn-sober.dark:hover {
+    background: #4b5563;
+    border-color: #6b7280;
+  }
+  
+  .btn-sober.dark.active {
+    background: #4b5563;
+    border-color: #6b7280;
+  }
+
+  /* Botão de menu hambúrguer */
+  .hamburger {
+    @apply p-2 rounded-lg transition-all;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .hamburger:hover {
+    background: #f3f4f6;
+  }
+  
+  .hamburger.dark {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+  }
+  
+  .hamburger.dark:hover {
+    background: #4b5563;
   }
   
   .resume-paper {
