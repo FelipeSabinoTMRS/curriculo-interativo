@@ -24,8 +24,6 @@
   /* Container responsivo para o currículo */
   .resume-container {
     @apply w-full flex justify-center;
-    /* Escala responsiva baseada na largura da viewport */
-    transform-origin: top center;
     transition: transform 0.3s ease-in-out;
   }
   
@@ -35,72 +33,64 @@
     transition: transform 0.3s ease-in-out;
   }
   
-  /* Escala para telas pequenas */
+  /* Escala para debug panel em telas pequenas */
   @media (max-width: 1023px) {
-    .resume-container {
-      transform: scale(0.85);
-    }
-    
     .debug-panel-container {
       transform: scale(0.85);
     }
   }
   
   @media (max-width: 899px) {
-    .resume-container {
-      transform: scale(0.75);
-    }
-    
     .debug-panel-container {
       transform: scale(0.75);
     }
   }
   
   @media (max-width: 767px) {
-    .resume-container {
-      transform: scale(0.65);
-    }
-    
     .debug-panel-container {
       transform: scale(0.65);
     }
   }
   
   @media (max-width: 639px) {
-    .resume-container {
-      transform: scale(0.55);
-    }
-    
     .debug-panel-container {
       transform: scale(0.55);
     }
   }
   
   @media (max-width: 520px) {
-    .resume-container {
-      transform: scale(0.45);
-    }
-    
     .debug-panel-container {
       transform: scale(0.45);
     }
   }
   
   @media (max-width: 420px) {
-    .resume-container {
-      transform: scale(0.4);
-    }
-    
     .debug-panel-container {
       transform: scale(0.4);
     }
   }
   
   .resume-paper {
-    @apply bg-white rounded-lg shadow-lg border border-gray-200 min-h-[297mm] w-[210mm];
+    @apply rounded-lg shadow-lg border border-gray-200 min-h-[297mm] w-[210mm];
     /* A4 paper dimensions */
     aspect-ratio: 210/297;
     margin: 0 auto;
+  }
+  
+  /* Tema escuro para o papel do currículo */
+  .resume-paper.dark-theme {
+    @apply bg-gray-900 border-gray-700;
+  }
+  
+  /* Garantir que impressão sempre seja clara */
+  @media print {
+    .resume-paper.dark-theme {
+      @apply bg-white border-gray-200 !important;
+    }
+    
+    .resume-paper.dark-theme * {
+      color: inherit !important;
+    }
   }
   
   .control-panel {
@@ -144,13 +134,6 @@
     display: none !important;
   }
   
-  /* Reset da escala responsiva durante impressão */
-  .resume-container {
-    transform: none !important;
-    width: 100% !important;
-    display: block !important;
-  }
-  
   .debug-panel-container {
     transform: none !important;
   }
@@ -165,6 +148,51 @@
     min-height: auto !important;
     border-radius: 0 !important;
     background: white !important;
+  }
+  
+  /* Garantir impressão clara independente do tema */
+  .resume-paper,
+  .resume-paper * {
+    background: white !important;
+    color: black !important;
+  }
+  
+  /* Cores específicas para impressão */
+  .resume-paper h1,
+  .resume-paper h2,
+  .resume-paper h3,
+  .resume-paper h4 {
+    color: #1f2937 !important;
+  }
+  
+  .resume-paper .text-blue-300,
+  .resume-paper .text-ai-blue-600 {
+    color: #2563eb !important;
+  }
+  
+  .resume-paper .text-gray-300,
+  .resume-paper .text-gray-400 {
+    color: #374151 !important;
+  }
+  
+  .resume-paper .border-blue-400 {
+    border-color: #93c5fd !important;
+  }
+  
+  .resume-paper .bg-blue-800 {
+    background-color: #dbeafe !important;
+  }
+  
+  .resume-paper .text-blue-200 {
+    color: #1e40af !important;
+  }
+  
+  .resume-paper .bg-blue-400 {
+    background-color: #3b82f6 !important;
+  }
+  
+  .resume-paper .bg-gray-600 {
+    background-color: #d1d5db !important;
   }
   
   body {
@@ -186,7 +214,6 @@
     margin: 0 !important;
     padding: 0 !important;
     size: A4;
-    /* Remove todas as bordas da página */
     border: none !important;
   }
   
@@ -195,24 +222,20 @@
     page-break-inside: avoid;
   }
   
-  /* Forçar quebra de página quando necessário */
   .print\:break-before-page {
     page-break-before: always !important;
   }
   
-  /* Altura mínima para páginas A4 */
   .print\:min-h-\[297mm\] {
     min-height: 297mm !important;
   }
   
-  /* Evitar quebras de página desnecessárias */
   .resume-paper h1,
   .resume-paper h2,
   .resume-paper h3 {
     page-break-after: avoid;
   }
   
-  /* Evitar quebra dentro de seções */
   section {
     page-break-inside: avoid;
   }

@@ -81,6 +81,7 @@ export default function Index() {
   const [resume, setResume] = useState<Resume>(mockResume);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
   
   // Mock connection status
   const [connectionStatus, setConnectionStatus] = useState<DatabaseConnection>({
@@ -149,16 +150,29 @@ export default function Index() {
     alert("Upload de imagens em desenvolvimento! 🚧\n\nEsta funcionalidade será integrada com Cloudflare R2 para armazenamento de imagens.");
   };
 
+  const handleThemeToggle = () => {
+    setIsDarkTheme(!isDarkTheme);
+  };
+
   return (
-    <div className="min-h-screen bg-ai-complex animate-gradient-flow relative overflow-hidden">
-      {/* Animated background layers */}
-      <div className="absolute inset-0 bg-ai-mesh animate-bg-shift opacity-70"></div>
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-900/10 to-indigo-900/20"></div>
-      
-      {/* Floating orbs for extra visual interest */}
-      <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      <div className="absolute top-3/4 left-3/4 w-48 h-48 bg-cyan-400/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+    <div className={`min-h-screen transition-all duration-500 relative overflow-hidden ${isDarkTheme ? 'bg-gray-900' : 'bg-ai-complex animate-gradient-flow'}`}>
+      {/* Animated background layers - only show in light theme */}
+      {!isDarkTheme && (
+        <>
+          <div className="absolute inset-0 bg-ai-mesh animate-bg-shift opacity-70"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-900/10 to-indigo-900/20"></div>
+          
+          {/* Floating orbs for extra visual interest */}
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-3/4 left-3/4 w-48 h-48 bg-cyan-400/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+        </>
+      )}
+
+      {/* Dark theme background */}
+      {isDarkTheme && (
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"></div>
+      )}
 
       {/* Top Bar */}
       <TopBar
@@ -166,28 +180,29 @@ export default function Index() {
         onEdit={handleEdit}
         onSave={handleSave}
         onImageUpload={handleImageUpload}
+        onThemeToggle={handleThemeToggle}
         isEditing={isEditing}
         isSaving={isSaving}
+        isDarkTheme={isDarkTheme}
       />
 
       {/* Content overlay */}
-      <div className="absolute inset-0 bg-gray-100/40 backdrop-blur-[1px]"></div>
+      <div className={`absolute inset-0 transition-all duration-500 ${isDarkTheme ? 'bg-gray-800/20' : 'bg-gray-100/40 backdrop-blur-[1px]'}`}></div>
       
       {/* Debug Panel - Fixed position */}
       <DebugPanel
         connectionStatus={connectionStatus}
         onRefreshConnection={handleRefreshConnection}
+        isDarkTheme={isDarkTheme}
       />
 
       {/* Main container */}
-      <div className="relative z-10 container mx-auto px-2 py-4 sm:px-3 md:px-4">
+      <div className="relative z-10 container mx-auto px-2 py-0 sm:px-3 sm:py-1 md:px-4 md:py-1 lg:py-2">
         {/* Main layout */}
         <div className="flex justify-center items-start max-w-7xl mx-auto">
           {/* Center - Resume viewer */}
           <div className="w-full max-w-4xl">
-            <div className="flex justify-center">
-              <ResumeViewer resume={resume} />
-            </div>
+            <ResumeViewer resume={resume} isDarkTheme={isDarkTheme} />
           </div>
         </div>
       </div>

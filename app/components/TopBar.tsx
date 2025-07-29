@@ -1,12 +1,14 @@
-import { Printer, Edit3, Save, Upload, Github, ExternalLink } from 'lucide-react';
+import { Printer, Edit3, Save, Upload, Github, ExternalLink, Sun, Moon } from 'lucide-react';
 
 interface TopBarProps {
   onPrint: () => void;
   onEdit: () => void;
   onSave: () => void;
   onImageUpload: () => void;
+  onThemeToggle: () => void;
   isEditing?: boolean;
   isSaving?: boolean;
+  isDarkTheme?: boolean;
 }
 
 export default function TopBar({ 
@@ -14,8 +16,10 @@ export default function TopBar({
   onEdit, 
   onSave, 
   onImageUpload,
+  onThemeToggle,
   isEditing = false,
-  isSaving = false 
+  isSaving = false,
+  isDarkTheme = false
 }: TopBarProps) {
   return (
     <div className="bg-white/10 backdrop-blur-lg border-b border-white/20 sticky top-0 z-50 no-print">
@@ -61,6 +65,16 @@ export default function TopBar({
             >
               <Save className="w-4 h-4" />
               <span className="hidden sm:inline">{isSaving ? 'Salvando...' : 'Salvar'}</span>
+            </button>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={onThemeToggle}
+              className="flex items-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all duration-300 text-sm"
+              title={isDarkTheme ? 'Tema Claro' : 'Tema Escuro'}
+            >
+              {isDarkTheme ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              <span className="hidden sm:inline">{isDarkTheme ? 'Claro' : 'Escuro'}</span>
             </button>
 
             {/* Print Button */}
