@@ -26,6 +26,7 @@ export default function EditableField({
   const [isFieldEditing, setIsFieldEditing] = useState(false);
 
   const handleSave = () => {
+    console.log('EditableField handleSave chamado com valor:', editValue);
     onSave(editValue);
     setIsFieldEditing(false);
   };

@@ -52,10 +52,10 @@ const mockResume: Resume = {
     {
       institution: "FIAP - Faculdade de Informática e Administração Paulista",
       degree: "Graduação em Técnico em Inteligência Artificial",
-      fieldOfStudy: "1° Sem. Concluído com Nota 9.83/10 - FIAP Certified Machine Learning Professional\n2° Sem. em Andamento",
+      fieldOfStudy: "1° Sem. Concluído com Nota 9.83/10 - FIAP Certified Machine Learning Professional",
       startDate: "Janeiro de 2025",
       endDate: "Dezembro de 2026",
-      gpa: "9.83 de 10",
+      gpa: "2° Sem. em Andamento",
       description: "Foco em liderar equipes de implantação e desenvolvimento de soluções utilizando todas as vertentes da inteligência artificial, tais como: Machine Learning, Deep Learning, Chat Bot, processamento de linguagem natural e Reinforcement Learning."
     }
   ],
@@ -107,33 +107,55 @@ export default function Index() {
   // Carregar tema e dados do currículo
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // Limpar os dados do cookie para forçar o uso dos novos valores
-      document.cookie = `${RESUME_DATA_COOKIE}=; max-age=0; path=/; samesite=lax`;
-      
       // Carregar tema
       localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
       
-      // Carregar dados salvos do currículo (agora usará o mockResume pois o cookie foi limpo)
+      // Carregar dados salvos do currículo ou usar mockResume como padrão
       const savedResume = getCookie(RESUME_DATA_COOKIE);
+      console.log('Cookie encontrado:', savedResume ? 'sim' : 'não');
       if (savedResume) {
         try {
           const parsedData = JSON.parse(savedResume);
+          console.log('Dados parseados:', parsedData);
           if (parsedData && typeof parsedData === 'object') {
-            setResumeData(parsedData);
+            // Mesclar dados salvos com valores atualizados do mockResume
+            // Apenas a expectativa salarial não é persistente
+            const mergedData = {
+              ...mockResume,
+              ...parsedData,
+              personalInfo: {
+                ...mockResume.personalInfo,
+                ...parsedData.personalInfo,
+                // Forçar apenas a expectativa salarial para sempre usar o valor do código
+                salary: mockResume.personalInfo.salary,
+              }
+            };
+            console.log('Dados mesclados:', mergedData);
+            setResumeData(mergedData);
+          } else {
+            console.log('Usando mockResume (dados inválidos)');
+            setResumeData(mockResume);
           }
         } catch (e) {
           console.error('Erro ao carregar dados do currículo:', e);
+          setResumeData(mockResume);
         }
+      } else {
+        // Se não há dados salvos, usar mockResume
+        console.log('Usando mockResume (sem cookie)');
+        setResumeData(mockResume);
       }
     }
-  }, []);
+  }, [isDarkTheme]);
 
   // Salvar dados em cookie
   const saveResumeToCookie = (data: Resume) => {
     if (typeof window !== 'undefined') {
       try {
         const jsonData = JSON.stringify(data);
+        console.log('Salvando no cookie:', jsonData.substring(0, 100) + '...');
         setCookie(RESUME_DATA_COOKIE, jsonData, COOKIE_MAX_AGE);
+        console.log('Cookie salvo com sucesso');
       } catch (e) {
         console.error('Erro ao salvar dados do currículo:', e);
       }
@@ -142,17 +164,26 @@ export default function Index() {
 
   // Funções para manipular cookies
   const setCookie = (name: string, value: string, maxAgeSeconds: number) => {
-    document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${maxAgeSeconds}; path=/; samesite=lax`;
+    const cookieString = `${name}=${encodeURIComponent(value)}; max-age=${maxAgeSeconds}; path=/; samesite=lax`;
+    console.log('Definindo cookie:', cookieString.substring(0, 100) + '...');
+    document.cookie = cookieString;
+    console.log('Cookies atuais:', document.cookie);
   };
 
   const getCookie = (name: string) => {
+    console.log('Buscando cookie:', name);
+    console.log('Todos os cookies:', document.cookie);
     const cookies = document.cookie.split(';');
     for (let cookie of cookies) {
       const [cookieName, cookieValue] = cookie.trim().split('=');
+      console.log('Verificando cookie:', cookieName, '=', cookieValue ? 'encontrado' : 'não encontrado');
       if (cookieName === name) {
-        return decodeURIComponent(cookieValue);
+        const value = decodeURIComponent(cookieValue);
+        console.log('Cookie encontrado:', name, '=', value.substring(0, 100) + '...');
+        return value;
       }
     }
+    console.log('Cookie não encontrado:', name);
     return null;
   };
 
@@ -172,8 +203,8 @@ export default function Index() {
           // Mostrar confirmação ao usuário
           dialog.showSuccess(
             "Dados Salvos!",
-            "As alterações foram salvas e serão mantidas na próxima visita.",
-            3000
+            "Alterações salvas e mantidas na próxima visita.\n\n💡 Expectativa Salarial voltará para 'R$ X.000,00 ao atualizar'.",
+            4000
           );
           
           setIsEditing(false);
@@ -183,10 +214,10 @@ export default function Index() {
     } else {
       setIsEditing(true);
       setEditSession(`session_${Date.now()}`);
-      dialog.showInfo(
+      dialog.showWarning(
         "Modo de edição ativado",
-        "Agora você pode editar todos os campos do currículo, incluindo títulos, datas e habilidades. Use 'Salvar como PDF' para fazer o download.",
-        5000
+        "Edite todos os campos do currículo. Finalize para salvar como PDF.",
+        6000
       );
     }
   };
@@ -544,8 +575,11 @@ export default function Index() {
   };
 
   const handleFieldChange = (updatedResume: Resume) => {
+    console.log('handleFieldChange chamado:', updatedResume);
     // Atualiza o estado com o currículo modificado
     setResumeData(updatedResume);
+    // Salva automaticamente no cookie
+    saveResumeToCookie(updatedResume);
   };
 
   return (

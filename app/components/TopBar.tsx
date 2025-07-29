@@ -100,8 +100,9 @@ export default function TopBar({
 
           <button 
             onClick={onDownloadPDF}
-            className={`btn-sober ${isDarkTheme ? 'dark' : ''}`}
-            title="Salvar como PDF"
+            disabled={isEditing}
+            className={`btn-sober ${isDarkTheme ? 'dark' : ''} ${isEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
+            title={isEditing ? "Finalize a edição primeiro para salvar como PDF" : "Salvar como PDF"}
           >
             <Download size={20} />
           </button>
@@ -207,12 +208,15 @@ export default function TopBar({
                 </button>
                 <button 
                   onClick={() => { onDownloadPDF(); closeMobileMenu(); }}
+                  disabled={isEditing}
                   className={`w-full flex items-center space-x-3 p-4 rounded-lg transition-colors ${
-                    isDarkTheme ? 'bg-gray-600 hover:bg-gray-700 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-900'
+                    isEditing 
+                      ? (isDarkTheme ? 'bg-gray-400 text-gray-300 cursor-not-allowed' : 'bg-gray-300 text-gray-500 cursor-not-allowed')
+                      : (isDarkTheme ? 'bg-gray-600 hover:bg-gray-700 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-900')
                   }`}
                 >
                   <Download size={20} />
-                  <span>Salvar como PDF</span>
+                  <span>{isEditing ? 'Finalize a edição primeiro' : 'Salvar como PDF'}</span>
                 </button>
                 <button 
                   onClick={() => { handleResetData(); closeMobileMenu(); }}

@@ -753,7 +753,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
               <div className="flex items-center space-x-3">
                 <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
                   {profilePhoto ? (
-                    <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+                    <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover object-center scale-110" />
                   ) : (
                     <User size={24} className="text-gray-400" />
                   )}
@@ -798,7 +798,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                         key={index}
                         src={photo}
                         alt={`Opção ${index + 1}`}
-                        className="w-12 h-12 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
+                        className="w-12 h-12 rounded-full object-cover object-center scale-110 cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
                         onClick={() => {
                           setProfilePhoto(photo);
                           setShowProfileSelector(false);
@@ -965,7 +965,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
               <div className="absolute top-8 left-8 w-36 h-36 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center border-4" 
                    style={{ borderColor: selectedTheme.colors.primary }}>
                 {profilePhoto ? (
-                  <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+                  <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover object-center scale-110" />
                 ) : (
                   <User size={48} className="text-gray-400" />
                 )}
