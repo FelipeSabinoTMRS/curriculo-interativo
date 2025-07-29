@@ -1,0 +1,418 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-100 text-gray-900 font-sans antialiased;
+  }
+  
+  /* Melhorias para renderização dos ícones e etiquetas */
+  .lucide {
+    vertical-align: middle;
+    display: inline-block;
+  }
+  
+  .rounded-full {
+    vertical-align: middle;
+    padding: 0.35rem 0.75rem;
+    line-height: 1.2;
+  }
+  
+  /* Melhoria específica para PDF */
+  .pdf-render .lucide {
+    transform: translateY(-1px);
+  }
+  
+  .pdf-render .rounded-full {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@layer components {
+  .ai-card {
+    @apply bg-white/70 backdrop-blur-sm border border-white/20 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+  
+  .ai-button {
+    @apply bg-ai-gradient text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border-0;
+  }
+  
+  .ai-button-secondary {
+    @apply bg-white/10 backdrop-blur-sm text-ai-blue-700 px-6 py-3 rounded-lg font-semibold border border-ai-blue-200 hover:bg-white/20 transition-all duration-300;
+  }
+  
+  /* Container responsivo para o currículo */
+  .resume-container {
+    @apply w-full flex justify-center;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Container responsivo para o debug panel - FIXO */
+  .debug-panel-container {
+    position: fixed !important;
+    top: 1rem;
+    right: 1rem;
+    z-index: 50;
+    transform-origin: top right;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Debug panel responsivo - esconder em mobile quando houver menu */
+  @media (max-width: 768px) {
+    .debug-panel-container {
+      display: none;
+    }
+  }
+  
+  /* Escala para debug panel em telas pequenas */
+  @media (max-width: 1023px) {
+    .debug-panel-container {
+      transform: scale(0.85);
+    }
+  }
+  
+  @media (max-width: 899px) {
+    .debug-panel-container {
+      transform: scale(0.75);
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .debug-panel-container {
+      transform: scale(0.65);
+    }
+  }
+  
+  @media (max-width: 639px) {
+    .debug-panel-container {
+      transform: scale(0.55);
+    }
+  }
+  
+  @media (max-width: 520px) {
+    .debug-panel-container {
+      transform: scale(0.45);
+    }
+  }
+  
+  @media (max-width: 420px) {
+    .debug-panel-container {
+      transform: scale(0.4);
+    }
+  }
+
+  /* Chave do tema - Estilo sóbrio sem gradientes */
+  .theme-toggle-switch {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background: #e5e7eb; /* gray-200 */
+    border: 2px solid #d1d5db; /* gray-300 */
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .theme-toggle-switch.dark {
+    background: #374151; /* gray-700 */
+    border-color: #4b5563; /* gray-600 */
+  }
+  
+  .theme-toggle-switch::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 22px;
+    height: 22px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .theme-toggle-switch.dark::before {
+    transform: translateX(28px);
+    background: #1f2937; /* gray-800 */
+  }
+  
+  .theme-toggle-switch:hover {
+    transform: scale(1.05);
+  }
+
+  /* Menu móvel lateral */
+  .mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 50;
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 320px;
+    max-width: 90vw;
+    background: white;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 51;
+    overflow-y: auto;
+    display: none;
+  }
+  
+  .mobile-menu.dark {
+    background: #1f2937;
+  }
+  
+  .mobile-menu.open {
+    transform: translateX(0);
+    display: block;
+  }
+  
+  .mobile-menu.editing {
+    box-shadow: -4px 0 20px rgba(234, 179, 8, 0.3);
+  }
+  
+  .mobile-menu.editing.dark {
+    box-shadow: -4px 0 20px rgba(234, 179, 8, 0.5);
+  }
+  
+  /* Botões estilo sóbrio */
+  .btn-sober {
+    @apply p-3 rounded-lg transition-all duration-200 border;
+    background: #f9fafb;
+    border-color: #e5e7eb;
+    color: #374151;
+  }
+  
+  .btn-sober:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn-sober.active {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+  }
+  
+  .btn-sober.dark {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+  }
+  
+  .btn-sober.dark:hover {
+    background: #4b5563;
+    border-color: #6b7280;
+  }
+  
+  .btn-sober.dark.active {
+    background: #4b5563;
+    border-color: #6b7280;
+  }
+
+  /* Botão de menu hambúrguer */
+  .hamburger {
+    @apply p-2 rounded-lg transition-all;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .hamburger:hover {
+    background: #f3f4f6;
+  }
+  
+  .hamburger.dark {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+  }
+  
+  .hamburger.dark:hover {
+    background: #4b5563;
+  }
+  
+  .resume-paper {
+    @apply rounded-lg shadow-lg border border-gray-200 min-h-[297mm] w-[210mm];
+    /* A4 paper dimensions */
+    aspect-ratio: 210/297;
+    margin: 0 auto;
+  }
+  
+  /* Tema escuro para o papel do currículo */
+  .resume-paper.dark-theme {
+    @apply bg-gray-900 border-gray-700;
+  }
+  
+  /* Garantir que impressão sempre seja clara */
+  @media print {
+    .resume-paper.dark-theme {
+      @apply bg-white border-gray-200 !important;
+    }
+    
+    .resume-paper.dark-theme * {
+      color: inherit !important;
+    }
+  }
+  
+  .control-panel {
+    @apply ai-card p-6;
+  }
+}
+
+@layer utilities {
+  .ai-glow {
+    box-shadow: 0 0 20px rgba(56, 172, 255, 0.3);
+  }
+  
+  .ai-glow-strong {
+    box-shadow: 0 0 30px rgba(56, 172, 255, 0.5);
+  }
+  
+  /* Animated background utilities */
+  .animate-bg-shift {
+    background-size: 200% 200%;
+    background-attachment: fixed;
+  }
+  
+  .animate-gradient-flow {
+    background-size: 300% 300%;
+    background-attachment: fixed;
+  }
+  
+  /* Floating orbs */
+  .delay-500 {
+    animation-delay: 0.5s;
+  }
+  
+  .delay-1000 {
+    animation-delay: 1s;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .debug-panel-container {
+    transform: none !important;
+  }
+  
+  .resume-paper {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: auto !important;
+    border-radius: 0 !important;
+    background: white !important;
+  }
+  
+  /* Garantir impressão clara independente do tema */
+  .resume-paper,
+  .resume-paper * {
+    background: white !important;
+    color: black !important;
+  }
+  
+  /* Cores específicas para impressão */
+  .resume-paper h1,
+  .resume-paper h2,
+  .resume-paper h3,
+  .resume-paper h4 {
+    color: #1f2937 !important;
+  }
+  
+  .resume-paper .text-blue-300,
+  .resume-paper .text-ai-blue-600 {
+    color: #2563eb !important;
+  }
+  
+  .resume-paper .text-gray-300,
+  .resume-paper .text-gray-400 {
+    color: #374151 !important;
+  }
+  
+  .resume-paper .border-blue-400 {
+    border-color: #93c5fd !important;
+  }
+  
+  .resume-paper .bg-blue-800 {
+    background-color: #dbeafe !important;
+  }
+  
+  .resume-paper .text-blue-200 {
+    color: #1e40af !important;
+  }
+  
+  .resume-paper .bg-blue-400 {
+    background-color: #3b82f6 !important;
+  }
+  
+  .resume-paper .bg-gray-600 {
+    background-color: #d1d5db !important;
+  }
+  
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  html {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  * {
+    box-shadow: none !important;
+  }
+  
+  @page {
+    margin: 0 !important;
+    padding: 0 !important;
+    size: A4;
+    border: none !important;
+  }
+  
+  /* Controle de quebras de página */
+  .resume-paper {
+    page-break-inside: avoid;
+  }
+  
+  .print\:break-before-page {
+    page-break-before: always !important;
+  }
+  
+  .print\:min-h-\[297mm\] {
+    min-height: 297mm !important;
+  }
+  
+  .resume-paper h1,
+  .resume-paper h2,
+  .resume-paper h3 {
+    page-break-after: avoid;
+  }
+  
+  section {
+    page-break-inside: avoid;
+  }
+} 

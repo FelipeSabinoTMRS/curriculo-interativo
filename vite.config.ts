@@ -25,6 +25,8 @@ export default defineConfig({
         v3_singleFetch: true,
         v3_lazyRouteDiscovery: true,
       },
+      // @ts-ignore - publicPath funciona mesmo que o tipo não reconheça
+      publicPath: "/",
     }),
     tsconfigPaths(),
   ],
@@ -38,5 +40,8 @@ export default defineConfig({
   },
   build: {
     minify: true,
+  },
+  css: {
+    postcss: "./postcss.config.js",
   },
 });

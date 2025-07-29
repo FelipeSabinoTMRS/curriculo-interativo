@@ -7,6 +7,6 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 ENVIRONMENT = "production"
 
-# Build configuration
-[build]
-command = "npm run build"
+# Assets configuration - usando [assets] em vez de [site] para melhor compatibilidade
+[assets]
+directory = "./build/client"

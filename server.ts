@@ -8,7 +8,7 @@ import { getLoadContext } from "./load-context";
 const handleRemixRequest = createRequestHandler(build as any as ServerBuild);
 
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request: Request, env: any, ctx: any) {
     try {
       const loadContext = getLoadContext({
         request,
@@ -22,6 +22,7 @@ export default {
             ctx: {
               waitUntil: ctx.waitUntil.bind(ctx),
               passThroughOnException: ctx.passThroughOnException.bind(ctx),
+              props: {},
             },
             caches,
             env,
@@ -34,4 +35,4 @@ export default {
       return new Response("An unexpected error occurred", { status: 500 });
     }
   },
-} satisfies ExportedHandler<Env>;
+};
