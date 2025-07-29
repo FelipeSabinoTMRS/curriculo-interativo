@@ -941,7 +941,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
           }}
           ref={containerRef}
         >
-          <div className="space-y-4">
+          <div className={`space-y-${isEditing ? 40 : 4} transition-all duration-300`}>
             {/* Primeira Página */}
             <div 
               className={`resume-paper min-h-[297mm] p-8 mx-auto print:shadow-none print:min-h-[297mm] relative ${
@@ -1190,4 +1190,4 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
       </div>
     </>
   );
-} 
+}
