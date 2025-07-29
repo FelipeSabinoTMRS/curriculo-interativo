@@ -129,12 +129,6 @@
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 50;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-  }
-  
-  .mobile-menu-overlay.open {
     opacity: 1;
     visibility: visible;
   }
@@ -145,12 +139,14 @@
     right: 0;
     height: 100vh;
     width: 320px;
+    max-width: 90vw;
     background: white;
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
     transform: translateX(100%);
     transition: transform 0.3s ease;
     z-index: 51;
     overflow-y: auto;
+    display: none;
   }
   
   .mobile-menu.dark {
@@ -159,8 +155,9 @@
   
   .mobile-menu.open {
     transform: translateX(0);
+    display: block;
   }
-
+  
   /* Botões estilo sóbrio */
   .btn-sober {
     @apply p-3 rounded-lg transition-all duration-200 border;

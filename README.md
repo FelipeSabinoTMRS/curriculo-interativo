@@ -94,13 +94,9 @@ npm run dev
 curriculo-interativo/
 ├── app/                     # Aplicação Remix
 │   ├── components/         # Componentes React
-│   │   ├── ResumeViewer.tsx   # Visualizador editável
-│   │   ├── TopBar.tsx         # Barra superior
-│   │   ├── DebugPanel.tsx     # Painel de debug
-│   │   └── Dialog.tsx         # Sistema de dialogs
-│   ├── services/           # Serviços de integração
-│   │   ├── database.ts        # Serviço D1
-│   │   └── storage.ts         # Serviço R2
+│   │   ├── Dialog.tsx          # Sistema de diálogos
+│   │   ├── ResumeViewer.tsx    # Visualizador do currículo
+│   │   └── TopBar.tsx          # Barra superior
 │   ├── hooks/              # Hooks customizados
 │   │   └── useDialog.ts       # Hook para dialogs
 │   └── types/              # Definições TypeScript
@@ -205,31 +201,4 @@ ADMIN_EMAIL = "seu@email.com"
 
 ### **Debug**
 - `GET /api/debug/status` - Status dos serviços
-- `GET /api/health` - Saúde do Worker
-
-## 🤝 Contribuição
-
-1. Fork o projeto
-2. Crie uma branch: `git checkout -b feature/nova-funcionalidade`
-3. Commit: `git commit -m 'Adiciona nova funcionalidade'`
-4. Push: `git push origin feature/nova-funcionalidade`
-5. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
-## 🎯 Roadmap
-
-- [ ] **Autenticação OAuth** - Login com GitHub/Google
-- [ ] **Templates** - Múltiplos layouts de currículo
-- [ ] **Exportação** - PDF, Word, LinkedIn
-- [ ] **Analytics** - Métricas de visualização
-- [ ] **Comentários** - Sistema de feedback
-- [ ] **Versionamento** - Histórico de alterações
-
----
-
-**Desenvolvido com ❤️ por [Felipe Sabino](https://github.com/FelipeSabinoTMRS)**
-
-🌟 **Se este projeto foi útil, deixe uma estrela!** 
+- `

@@ -1,18 +1,7 @@
 name = "curriculo-interativo"
-main = "functions/[[path]].ts"
+main = "./server.ts"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
-
-# Configuração do D1 Database
-[[d1_databases]]
-binding = "DB"
-database_name = "curriculo-db"
-database_id = "your-d1-database-id"
-
-# Configuração do R2 Storage
-[[r2_buckets]]
-binding = "R2"
-bucket_name = "curriculo-images"
 
 # Variáveis de ambiente
 [vars]
@@ -21,10 +10,3 @@ ENVIRONMENT = "production"
 # Build configuration
 [build]
 command = "npm run build"
-
-# Site configuration for Pages
-[site]
-bucket = "./dist"
-
-# Analytics
-[analytics_engine_datasets]

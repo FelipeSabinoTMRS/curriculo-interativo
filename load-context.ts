@@ -1,17 +1,27 @@
 import { type PlatformProxy } from "wrangler";
 
-// When using `wrangler.toml` to configure bindings,
-// `wrangler types` will generate types for those bindings
-// into the global `Env` interface.
-// Need this empty interface so that typechecking passes
-// even if no `wrangler.toml` exists.
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Env {}
+// Definir tipos do ambiente
+interface Env {
+  ENVIRONMENT: string;
+}
 
-type Cloudflare = Omit<PlatformProxy<Env>, "dispose">;
+type GetLoadContextArgs = {
+  request: Request;
+  context: {
+    cloudflare: Omit<PlatformProxy<Env>, "dispose" | "caches" | "cf"> & {
+      caches: PlatformProxy<Env>["caches"] | CacheStorage;
+      cf: Request["cf"];
+    };
+  };
+};
 
 declare module "@remix-run/cloudflare" {
-  interface AppLoadContext {
-    cloudflare: Cloudflare;
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface AppLoadContext extends ReturnType<typeof getLoadContext> {
+    // This will merge the result of `getLoadContext` into the `AppLoadContext`
   }
+}
+
+export function getLoadContext({ context }: GetLoadContextArgs) {
+  return context;
 }
