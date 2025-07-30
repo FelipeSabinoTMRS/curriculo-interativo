@@ -660,7 +660,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                   isDarkTheme ? 'text-white print:text-gray-800' : 'text-gray-800'
                 }`}
                 style={{ 
-                  background: `linear-gradient(to top, ${selectedTheme.colors.background}, transparent)`,
+                  backgroundColor: selectedTheme.colors.background,
                   color: selectedTheme.colors.secondary,
                   padding: '0.35rem 0.75rem',
                   lineHeight: '1.2',
@@ -777,7 +777,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                   isDarkTheme ? 'text-white print:text-black' : 'text-black'
                 }`}
                 style={{ 
-                  background: `linear-gradient(to top, ${selectedTheme.colors.background}, transparent)`,
+                  backgroundColor: selectedTheme.colors.background,
                   color: selectedTheme.colors.secondary,
                   padding: '0.35rem 0.75rem',
                   lineHeight: '1.2'
