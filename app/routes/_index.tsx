@@ -296,10 +296,15 @@ export default function Index() {
 
   const handleDownloadPDF = async () => {
     try {
+      // Detectar se é dispositivo móvel
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
       // Mostrar mensagem de carregamento
       dialog.showInfo(
         "Gerando PDF...",
-        "Por favor, aguarde enquanto o PDF está sendo gerado.",
+        isMobile 
+          ? "Por favor, aguarde. Em dispositivos móveis, o PDF será aberto em uma nova aba."
+          : "Por favor, aguarde enquanto o PDF está sendo gerado.",
         2000
       );
 
@@ -365,6 +370,11 @@ export default function Index() {
         format: 'a4',
         compress: true
       });
+
+      // Verificar se o PDF foi criado corretamente
+      if (!pdf) {
+        throw new Error('Falha ao criar o objeto PDF');
+      }
 
       // Dimensões A4: 210mm x 297mm
       const pdfWidth = 210;
@@ -518,28 +528,45 @@ export default function Index() {
 
         // Capturar a página atual com configurações otimizadas
         const canvas = await html2canvas(page, {
-          scale: 4, // Alta qualidade
-        useCORS: true,
-        allowTaint: true,
+          scale: isMobile ? 2 : 4, // Reduzir escala em mobile para melhor performance
+          useCORS: true,
+          allowTaint: true,
           backgroundColor: '#ffffff',
-        logging: false,
+          logging: false,
           windowWidth: 210 * 3.78, // Aproximadamente 210mm em pixels
           windowHeight: 297 * 3.78, // Aproximadamente 297mm em pixels
-        ignoreElements: (element) => {
-          return element.classList?.contains('debug-element') || 
-                 element.classList?.contains('mobile-menu') ||
-                 element.classList?.contains('mobile-menu-overlay') || 
-                 false;
-          },
-          onclone: (clonedDoc) => {
-            // Estilos adicionais para o documento clonado
-            const clonedPage = clonedDoc.querySelector('.resume-paper');
-            if (clonedPage) {
-              (clonedPage as HTMLElement).style.boxShadow = 'none';
-              (clonedPage as HTMLElement).style.border = 'none';
-              (clonedPage as HTMLElement).style.borderRadius = '0';
+          // Configurações adicionais para mobile
+          foreignObjectRendering: isMobile ? false : true, // Desabilitar em mobile para melhor compatibilidade
+          removeContainer: true, // Remover container temporário
+          imageTimeout: isMobile ? 15000 : 5000, // Timeout maior para mobile
+          ignoreElements: (element) => {
+            return element.classList?.contains('debug-element') || 
+                   element.classList?.contains('mobile-menu') ||
+                   element.classList?.contains('mobile-menu-overlay') || 
+                   false;
+            },
+            onclone: (clonedDoc) => {
+              // Estilos adicionais para o documento clonado
+              const clonedPage = clonedDoc.querySelector('.resume-paper');
+              if (clonedPage) {
+                (clonedPage as HTMLElement).style.boxShadow = 'none';
+                (clonedPage as HTMLElement).style.border = 'none';
+                (clonedPage as HTMLElement).style.borderRadius = '0';
+              }
+              
+              // Melhorias específicas para mobile no clone
+              if (isMobile) {
+                const allElements = clonedDoc.querySelectorAll('*');
+                allElements.forEach((el) => {
+                  const element = el as HTMLElement;
+                  // Garantir que elementos tenham dimensões explícitas
+                  if (element.offsetWidth === 0 || element.offsetHeight === 0) {
+                    element.style.display = 'block';
+                    element.style.visibility = 'visible';
+                  }
+                });
+              }
             }
-          }
         });
         
         // Restaurar estilos originais da página
@@ -655,17 +682,36 @@ export default function Index() {
           const link = document.createElement('a');
           link.href = url;
           link.download = `curriculo-felipe-sabino-${timestamp}.pdf`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
           
-          // Mostrar mensagem de sucesso
-          dialog.showSuccess(
-            "PDF gerado com sucesso!",
-            `O arquivo "${link.download}" foi salvo na pasta de downloads com o documento adicional.`,
-            3000
-          );
+          if (isMobile) {
+            // Em dispositivos móveis, abrir em nova aba
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            // Mostrar mensagem de sucesso
+            dialog.showSuccess(
+              "PDF gerado com sucesso!",
+              "O PDF foi aberto em uma nova aba. Use o botão de compartilhar do seu navegador para salvar.",
+              4000
+            );
+          } else {
+            // Em desktop, fazer download direto
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            // Mostrar mensagem de sucesso
+            dialog.showSuccess(
+              "PDF gerado com sucesso!",
+              `O arquivo "${link.download}" foi salvo na pasta de downloads com o documento adicional.`,
+              3000
+            );
+          }
           return;
         } catch (mergeError) {
           console.error("Erro ao mesclar PDFs:", mergeError);
@@ -675,21 +721,51 @@ export default function Index() {
 
       const fileName = `curriculo-felipe-sabino-${timestamp}.pdf`;
 
-      // Fazer download do PDF
-      pdf.save(fileName);
-
-      // Mostrar mensagem de sucesso
-      dialog.showSuccess(
-        "PDF gerado com sucesso!",
-        `O arquivo "${fileName}" foi salvo na pasta de downloads.`,
-        3000
-      );
+      if (isMobile) {
+        // Em dispositivos móveis, usar data URI para abrir em nova aba
+        const pdfDataUri = pdf.output('datauristring');
+        const link = document.createElement('a');
+        link.href = pdfDataUri;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Mostrar mensagem de sucesso
+        dialog.showSuccess(
+          "PDF gerado com sucesso!",
+          "O PDF foi aberto em uma nova aba. Use o botão de compartilhar do seu navegador para salvar.",
+          4000
+        );
+      } else {
+        // Em desktop, fazer download direto
+        pdf.save(fileName);
+        
+        // Mostrar mensagem de sucesso
+        dialog.showSuccess(
+          "PDF gerado com sucesso!",
+          `O arquivo "${fileName}" foi salvo na pasta de downloads.`,
+          3000
+        );
+      }
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
-      dialog.showError(
-        "Erro ao gerar PDF",
-        "Não foi possível criar o arquivo PDF. Por favor, tente novamente."
-      );
+      
+      // Detectar se é dispositivo móvel para mensagem específica
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        dialog.showError(
+          "Erro ao gerar PDF",
+          "Não foi possível gerar o PDF no dispositivo móvel. Tente:\n\n1. Usar um navegador diferente\n2. Verificar se há espaço suficiente\n3. Tentar novamente em alguns segundos"
+        );
+      } else {
+        dialog.showError(
+          "Erro ao gerar PDF",
+          "Não foi possível criar o arquivo PDF. Por favor, tente novamente."
+        );
+      }
     }
   };
 

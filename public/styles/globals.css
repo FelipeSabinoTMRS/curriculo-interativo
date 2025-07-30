@@ -415,4 +415,35 @@
   section {
     page-break-inside: avoid;
   }
+
+  /* Melhorias específicas para mobile na geração de PDF */
+  @media (max-width: 768px) {
+    .pdf-render .resume-paper {
+      transform: none !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+    }
+    
+    .pdf-render .resume-paper * {
+      font-size: inherit !important;
+      line-height: inherit !important;
+    }
+    
+    .pdf-render .lucide {
+      transform: translateY(-1px) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    
+    .pdf-render .rounded-full {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0.35rem 0.75rem !important;
+      margin: 0.15rem !important;
+      line-height: 1.2 !important;
+    }
+  }
 } 
