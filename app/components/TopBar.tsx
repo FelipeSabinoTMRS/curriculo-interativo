@@ -16,24 +16,19 @@ const AnimatedTitle = ({ isDarkTheme }: { isDarkTheme: boolean }) => {
       const currentWord = words[wordIndex];
       
       if (isDeleting) {
-        // Deletando caracteres
         setCurrentText(currentWord.substring(0, charIndex - 1));
         charIndex--;
       } else {
-        // Digitando caracteres
         setCurrentText(currentWord.substring(0, charIndex + 1));
         charIndex++;
       }
 
-      // Controlar velocidade e direção
       let typeSpeed = isDeleting ? 100 : 200;
 
       if (!isDeleting && charIndex === currentWord.length) {
-        // Pausa no final da palavra
         typeSpeed = 2000;
         isDeleting = true;
       } else if (isDeleting && charIndex === 0) {
-        // Mudar para próxima palavra
         isDeleting = false;
         wordIndex = (wordIndex + 1) % words.length;
         typeSpeed = 500;
@@ -52,12 +47,7 @@ const AnimatedTitle = ({ isDarkTheme }: { isDarkTheme: boolean }) => {
       <span 
         className="inline-block min-w-[120px]"
         style={{
-          background: 'linear-gradient(45deg, #fbbf24, #f59e0b, #d97706, #92400e, #fbbf24)',
-          backgroundSize: '400% 400%',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-          animation: 'gradientShift 3s ease-in-out infinite'
+          color: '#fbbf24',
         }}
       >
         {currentText}
