@@ -744,7 +744,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                     style={{ color: selectedTheme.colors.primary }}
                   >
                     <Github size={16} />
-                    <span className="text-sm hover:underline">{project.githubUrl.replace('https://github.com/', '')}</span>
+                    <span className="text-sm hover:underline">{project.githubUrl}</span>
                   </a>
                 )}
               </>
@@ -1045,13 +1045,10 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
             <div 
               className={`resume-paper min-h-[297mm] p-8 mx-auto print:shadow-none print:min-h-[297mm] relative ${
                 isDarkTheme 
-                  ? 'text-white border-gray-700 print:bg-white print:text-black print:border-gray-200 shadow-[0_4px_30px_rgba(200,200,255,0.15)]' 
-                  : 'text-gray-900 border-gray-200 shadow-2xl'
+                  ? 'bg-gray-900 text-white border-gray-700 print:bg-white print:text-black print:border-gray-200 shadow-[0_4px_30px_rgba(200,200,255,0.15)]' 
+                  : 'bg-white text-gray-900 border-gray-200 shadow-2xl'
               }`}
               style={{
-                backgroundColor: selectedWallpaper.id === 'none' 
-                  ? (isDarkTheme ? '#111827' : '#ffffff') 
-                  : (isDarkTheme ? '#1f2937' : '#f9fafb'),
                 ...getWallpaperStyle(),
                 ...({
                   '--theme-primary': selectedTheme.colors.primary,
