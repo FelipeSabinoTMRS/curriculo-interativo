@@ -1,6 +1,6 @@
 import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
 import type { Resume, Experience, Education, Project, Skill } from '~/types';
-import { Github, Mail, Phone, MapPin, Globe, Palette, Image, Upload, User, DollarSign, CheckCircle } from 'lucide-react';
+import { Github, Mail, Phone, MapPin, Globe, Palette, Image, Upload, User, DollarSign, CheckCircle, MousePointer } from 'lucide-react';
 import EditableField from "./EditableField";
 
 // Hook que usa useLayoutEffect no cliente e useEffect no servidor
@@ -93,27 +93,39 @@ const themes: Theme[] = [
 const wallpapers: Wallpaper[] = [
   {
     id: 'none',
-    name: 'Sem Wallpaper',
+    name: 'Sem Fundo',
     type: 'minimal',
     pattern: ''
   },
   {
-    id: 'pixels',
-    name: 'Pixels Tech',
-    type: 'pixels',
-    pattern: 'data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="2" height="2" fill="%23000" opacity="0.1"/%3E%3Crect x="2" y="2" width="2" height="2" fill="%23000" opacity="0.05"/%3E%3Crect x="4" y="4" width="2" height="2" fill="%23000" opacity="0.08"/%3E%3C/svg%3E'
-  },
-  {
     id: 'dots',
-    name: 'Pontos Geométricos',
+    name: 'Pontos Simples',
     type: 'geometric',
-    pattern: 'data:image/svg+xml,%3Csvg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="15" cy="15" r="1" fill="%23000" opacity="0.1"/%3E%3C/svg%3E'
+    pattern: 'dots'
   },
   {
     id: 'grid',
-    name: 'Grade Sutil',
+    name: 'Grade Simples',
     type: 'minimal',
-    pattern: 'data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M0 0h40v1H0zM0 0v40h1V0z" fill="%23000" opacity="0.05"/%3E%3C/svg%3E'
+    pattern: 'grid'
+  },
+  {
+    id: 'circles',
+    name: 'Círculos',
+    type: 'geometric',
+    pattern: 'circles'
+  },
+  {
+    id: 'squares',
+    name: 'Quadrados',
+    type: 'geometric',
+    pattern: 'squares'
+  },
+  {
+    id: 'pixels',
+    name: 'Pixels',
+    type: 'pixels',
+    pattern: 'pixels'
   }
 ];
 
@@ -132,8 +144,16 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
   // Estados locais para edição
   const [localResume, setLocalResume] = useState<Resume>(resume);
   const [selectedTheme, setSelectedTheme] = useState<Theme>(themes[0]);
-  const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper>(wallpapers[0]);
-  const [profilePhoto, setProfilePhoto] = useState<string>('');
+  const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper>(() => {
+    // Inicializar com o wallpaper salvo ou o primeiro disponível
+    const savedWallpaperId = resume.selectedWallpaper;
+    if (savedWallpaperId) {
+      const savedWallpaper = wallpapers.find(w => w.id === savedWallpaperId);
+      return savedWallpaper || wallpapers[0];
+    }
+    return wallpapers[0];
+  });
+  const [profilePhoto, setProfilePhoto] = useState<string>(resume.profilePhoto || '');
   const [showThemePalette, setShowThemePalette] = useState(false);
   const [showWallpaperSelector, setShowWallpaperSelector] = useState(false);
   const [showProfileSelector, setShowProfileSelector] = useState(false);
@@ -144,6 +164,20 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
   useEffect(() => {
     if (!isEditing) {
       setLocalResume(resume);
+      
+      // Sincronizar wallpaper selecionado
+      const savedWallpaperId = resume.selectedWallpaper;
+      if (savedWallpaperId) {
+        const savedWallpaper = wallpapers.find(w => w.id === savedWallpaperId);
+        if (savedWallpaper) {
+          setSelectedWallpaper(savedWallpaper);
+        }
+      }
+      
+      // Sincronizar foto de perfil
+      if (resume.profilePhoto) {
+        setProfilePhoto(resume.profilePhoto);
+      }
     }
   }, [resume, isEditing]);
 
@@ -330,10 +364,18 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfilePhoto(e.target?.result as string);
-        onFieldChange?.(localResume);
-      };
+              reader.onload = (e) => {
+          const photoData = e.target?.result as string;
+          setProfilePhoto(photoData);
+          
+          // Atualizar o currículo com a foto de perfil carregada
+          const updatedResume = {
+            ...localResume,
+            profilePhoto: photoData
+          };
+          setLocalResume(updatedResume);
+          onFieldChange?.(updatedResume);
+        };
       reader.readAsDataURL(file);
     }
   };
@@ -343,12 +385,52 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
   const getWallpaperStyle = () => {
     if (selectedWallpaper.id === 'none') return {};
     
-    return {
-      backgroundImage: `url("${selectedWallpaper.pattern}")`,
-      backgroundRepeat: 'repeat',
-      backgroundPosition: 'bottom right',
-      backgroundSize: selectedWallpaper.type === 'pixels' ? '20px 20px' : '30px 30px'
-    };
+    // Para pontos simples - usar imagem base64 para compatibilidade com PDF
+    if (selectedWallpaper.id === 'dots') {
+      return {
+        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyIiBmaWxsPSIjZmYwMDAwIiBvcGFjaXR5PSIwLjgiLz48L3N2Zz4=")',
+        backgroundSize: '40px 40px',
+        backgroundRepeat: 'repeat'
+      };
+    }
+    
+    // Para grade simples - usar imagem base64 para compatibilidade com PDF
+    if (selectedWallpaper.id === 'grid') {
+      return {
+        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCAwaDUwdjNIMHpNMCAwdjUwaDNIMHoiIGZpbGw9IiMwMGZmMDAiIG9wYWNpdHk9IjAuNiIvPjwvc3ZnPg==")',
+        backgroundSize: '50px 50px',
+        backgroundRepeat: 'repeat'
+      };
+    }
+    
+    // Para círculos - usar imagem base64 para compatibilidade com PDF
+    if (selectedWallpaper.id === 'circles') {
+      return {
+        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwZmYiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC43Ii8+PC9zdmc+")',
+        backgroundSize: '60px 60px',
+        backgroundRepeat: 'repeat'
+      };
+    }
+    
+    // Para quadrados - usar imagem base64 para compatibilidade com PDF
+    if (selectedWallpaper.id === 'squares') {
+      return {
+        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmY2NjAwIiBzdHJva2Utd2lkdGg9IjIiIG9wYWNpdHk9IjAuOCIvPjwvc3ZnPg==")',
+        backgroundSize: '40px 40px',
+        backgroundRepeat: 'repeat'
+      };
+    }
+    
+    // Para pixels - usar imagem base64 para compatibilidade com PDF
+    if (selectedWallpaper.id === 'pixels') {
+      return {
+        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxMjAiIGZpbGw9InRyYW5zcGFyZW50Ii8+PHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZGRkZGRkIiBvcGFjaXR5PSIwLjYiLz48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNhZGQ4ZmYiIG9wYWNpdHk9IjAuNyIvPjxyZWN0IHg9IjMwIiB5PSIzMCIgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0iI2RkZGRkZCIgb3BhY2l0eT0iMC42Ii8+PHJlY3QgeD0iODAiIHk9IjgwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48cmVjdCB4PSI5MCIgeT0iOTAiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNkZGRkZGQiIG9wYWNpdHk9IjAuNiIvPjxyZWN0IHg9IjEwMCIgeT0iMTAwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48cmVjdCB4PSIxMCIgeT0iMTAwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZGRkZGRkIiBvcGFjaXR5PSIwLjYiLz48cmVjdCB4PSIyMCIgeT0iMTEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48cmVjdCB4PSIxMDAiIHk9IjEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZGRkZGRkIiBvcGFjaXR5PSIwLjYiLz48cmVjdCB4PSIxMTAiIHk9IjIwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48L3N2Zz4=")',
+        backgroundSize: '120px 120px',
+        backgroundRepeat: 'repeat'
+      };
+    }
+    
+    return {};
   };
 
   // Renderiza a seção de experiências com suporte à edição completa
@@ -804,7 +886,14 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                         onClick={() => {
                           setProfilePhoto(photo);
                           setShowProfileSelector(false);
-                          onFieldChange?.(localResume);
+                          
+                          // Atualizar o currículo com a foto de perfil selecionada
+                          const updatedResume = {
+                            ...localResume,
+                            profilePhoto: photo
+                          };
+                          setLocalResume(updatedResume);
+                          onFieldChange?.(updatedResume);
                         }}
                       />
                     ))}
@@ -890,11 +979,18 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                   {wallpapers.map((wallpaper) => (
                     <button
                       key={wallpaper.id}
-                      onClick={() => {
-                        setSelectedWallpaper(wallpaper);
-                        setShowWallpaperSelector(false);
-                        onFieldChange?.(localResume);
-                      }}
+                                              onClick={() => {
+                          setSelectedWallpaper(wallpaper);
+                          setShowWallpaperSelector(false);
+                          
+                          // Atualizar o currículo com o wallpaper selecionado
+                          const updatedResume = {
+                            ...localResume,
+                            selectedWallpaper: wallpaper.id
+                          };
+                          setLocalResume(updatedResume);
+                          onFieldChange?.(updatedResume);
+                        }}
                       className={`w-full flex items-center justify-between p-2 rounded transition-colors ${
                         selectedWallpaper.id === wallpaper.id 
                           ? (isDarkTheme ? 'bg-gray-600' : 'bg-gray-200')
@@ -949,10 +1045,13 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
             <div 
               className={`resume-paper min-h-[297mm] p-8 mx-auto print:shadow-none print:min-h-[297mm] relative ${
                 isDarkTheme 
-                  ? 'bg-gray-900 text-white border-gray-700 print:bg-white print:text-black print:border-gray-200 shadow-[0_4px_30px_rgba(200,200,255,0.15)]' 
-                  : 'bg-white text-gray-900 border-gray-200 shadow-2xl'
+                  ? 'text-white border-gray-700 print:bg-white print:text-black print:border-gray-200 shadow-[0_4px_30px_rgba(200,200,255,0.15)]' 
+                  : 'text-gray-900 border-gray-200 shadow-2xl'
               }`}
               style={{
+                backgroundColor: selectedWallpaper.id === 'none' 
+                  ? (isDarkTheme ? '#111827' : '#ffffff') 
+                  : (isDarkTheme ? '#1f2937' : '#f9fafb'),
                 ...getWallpaperStyle(),
                 ...({
                   '--theme-primary': selectedTheme.colors.primary,
@@ -1030,15 +1129,20 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <Globe size={16} className="flex-shrink-0 translate-y-[0px] inline-block align-middle" style={{ color: selectedTheme.colors.primary }} />
-                    <EditableField
-                      value={currentData.personalInfo.githubUrl}
-                      onSave={(value) => handleFieldUpdate('personalInfo', 'githubUrl', value)}
-                      isEditing={isEditing}
-                      isDarkTheme={isDarkTheme}
-                      className={isDarkTheme ? 'text-gray-300 print:text-gray-700' : 'text-gray-700'}
-                      placeholder="https://seu-site.com"
-                    />
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                        Acesse Agora
+                      </span>
+                      <EditableField
+                        value={currentData.personalInfo.githubUrl.replace('Acesse Agora ', '')}
+                        onSave={(value) => handleFieldUpdate('personalInfo', 'githubUrl', `Acesse Agora ${value}`)}
+                        isEditing={isEditing}
+                        isDarkTheme={isDarkTheme}
+                        className={isDarkTheme ? 'text-gray-300 print:text-gray-700' : 'text-gray-700'}
+                        placeholder="https://seu-site.com"
+                      />
+                    </div>
+                    <MousePointer size={16} className="flex-shrink-0 translate-y-[0px] inline-block align-middle" style={{ color: selectedTheme.colors.primary }} />
                   </div>
                 </div>
                 

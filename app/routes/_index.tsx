@@ -23,7 +23,7 @@ const mockResume: Resume = {
     email: "felipe@sabinoseg.com.br",
     phone: "+55 (55) 99719-7937",
     location: "Três de Maio, RS",
-    githubUrl: "https://curriculo-interativo.felipe-ac1.workers.dev/",
+          githubUrl: "Acesse Agora https://curriculo-interativo.felipe-ac1.workers.dev/",
     acceptingOffers: true,
     salary: "Exp. Salarial R$ X.000,00",
     summary: "De acordo com o Predictive Index possuo o perfil Especialista (mais detalhes na Página 3), apaixonado por tecnologia com experiência em desenvolvimento web moderno usando React, TypeScript e Node.js. Especializado em soluções full-stack escaláveis e arquiteturas cloud-native. Tudo isso combinado com o verdadeiro conhecimento técnico em Inteligência Artificial."
@@ -84,7 +84,9 @@ const mockResume: Resume = {
       technologies: ["TypeScript", "Cloudflare Workers", "Tailwind CSS"],
       githubUrl: "https://github.com/FelipeSabinoTMRS/curriculo-interativo"
     }
-  ]
+  ],
+  selectedWallpaper: 'none', // Wallpaper padrão
+  profilePhoto: '' // Foto de perfil padrão (vazia)
 };
 
 // Cookie constants
