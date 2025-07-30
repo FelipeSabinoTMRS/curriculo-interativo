@@ -51,6 +51,8 @@ export interface Resume {
   education: Education[];
   skills: Skill[];
   projects: Project[];
+  selectedWallpaper?: string; // ID do wallpaper selecionado
+  profilePhoto?: string; // URL da imagem de perfil (base64 ou URL)
 }
 
 export interface ApiResponse<T = any> {

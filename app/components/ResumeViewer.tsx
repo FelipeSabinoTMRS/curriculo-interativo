@@ -1068,45 +1068,44 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                       <span className={`text-sm ${isDarkTheme ? 'text-gray-300 print:text-gray-700' : 'text-gray-700'}`}>
                         Aceito Propostas
                       </span>
-                      {isEditing && (
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-1">
-                            <input 
-                              type="radio" 
-                              id="acceptYes" 
-                              name="acceptingOffers" 
-                              checked={!!currentData.personalInfo.acceptingOffers}
-                              onChange={() => handleFieldUpdate('personalInfo', 'acceptingOffers', true)}
-                              className="h-4 w-4 cursor-pointer accent-blue-500"
-                            />
-                            <label htmlFor="acceptYes" className={`text-sm cursor-pointer ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
-                              Sim
-                            </label>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <input 
-                              type="radio" 
-                              id="acceptNo" 
-                              name="acceptingOffers" 
-                              checked={!currentData.personalInfo.acceptingOffers}
-                              onChange={() => handleFieldUpdate('personalInfo', 'acceptingOffers', false)}
-                              className="h-4 w-4 cursor-pointer accent-blue-500"
-                            />
-                            <label htmlFor="acceptNo" className={`text-sm cursor-pointer ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
-                              Não
-                            </label>
-                          </div>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1">
+                          <input 
+                            type="radio" 
+                            id="acceptYes" 
+                            name="acceptingOffers" 
+                            checked={!!currentData.personalInfo.acceptingOffers}
+                            onChange={isEditing ? () => handleFieldUpdate('personalInfo', 'acceptingOffers', true) : undefined}
+                            disabled={!isEditing}
+                            className={`h-4 w-4 ${isEditing ? 'cursor-pointer' : 'cursor-default opacity-60'}`}
+                            style={{ 
+                              accentColor: selectedTheme.colors.primary,
+                              '--tw-accent-color': selectedTheme.colors.primary
+                            } as React.CSSProperties}
+                          />
+                          <label htmlFor="acceptYes" className={`text-sm ${isEditing ? 'cursor-pointer' : 'cursor-default'} ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
+                            Sim
+                          </label>
                         </div>
-                      )}
-                      {!isEditing && (
-                        <span className={`text-xs px-2 py-0.5 rounded ${
-                          currentData.personalInfo.acceptingOffers
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {currentData.personalInfo.acceptingOffers ? 'Sim' : 'Não'}
-                        </span>
-                      )}
+                        <div className="flex items-center gap-1">
+                          <input 
+                            type="radio" 
+                            id="acceptNo" 
+                            name="acceptingOffers" 
+                            checked={!currentData.personalInfo.acceptingOffers}
+                            onChange={isEditing ? () => handleFieldUpdate('personalInfo', 'acceptingOffers', false) : undefined}
+                            disabled={!isEditing}
+                            className={`h-4 w-4 ${isEditing ? 'cursor-pointer' : 'cursor-default opacity-60'}`}
+                            style={{ 
+                              accentColor: selectedTheme.colors.primary,
+                              '--tw-accent-color': selectedTheme.colors.primary
+                            } as React.CSSProperties}
+                          />
+                          <label htmlFor="acceptNo" className={`text-sm ${isEditing ? 'cursor-pointer' : 'cursor-default'} ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
+                            Não
+                          </label>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
