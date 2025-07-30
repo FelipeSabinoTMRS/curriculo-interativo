@@ -1,6 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import { Edit3, Download, Menu, X, Github, Sun, Moon, RefreshCw } from 'lucide-react';
 
+// Componente para o título animado
+const AnimatedTitle = ({ isDarkTheme }: { isDarkTheme: boolean }) => {
+  const [currentText, setCurrentText] = useState('Interativo');
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    const words = ['Interativo', 'Especialista'];
+    let wordIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+
+    const typeText = () => {
+      const currentWord = words[wordIndex];
+      
+      if (isDeleting) {
+        // Deletando caracteres
+        setCurrentText(currentWord.substring(0, charIndex - 1));
+        charIndex--;
+      } else {
+        // Digitando caracteres
+        setCurrentText(currentWord.substring(0, charIndex + 1));
+        charIndex++;
+      }
+
+      // Controlar velocidade e direção
+      let typeSpeed = isDeleting ? 100 : 200;
+
+      if (!isDeleting && charIndex === currentWord.length) {
+        // Pausa no final da palavra
+        typeSpeed = 2000;
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        // Mudar para próxima palavra
+        isDeleting = false;
+        wordIndex = (wordIndex + 1) % words.length;
+        typeSpeed = 500;
+      }
+
+      setTimeout(typeText, typeSpeed);
+    };
+
+    const timer = setTimeout(typeText, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <h1 className={`text-xl font-bold ${isDarkTheme ? 'text-white' : 'text-black'}`}>
+      Currículo{' '}
+      <span 
+        className="inline-block min-w-[120px]"
+        style={{
+          background: 'linear-gradient(45deg, #fbbf24, #f59e0b, #d97706, #92400e, #fbbf24)',
+          backgroundSize: '400% 400%',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          animation: 'gradientShift 3s ease-in-out infinite'
+        }}
+      >
+        {currentText}
+      </span>
+    </h1>
+  );
+};
+
 interface TopBarProps {
   onEdit: () => void;
   onDownloadPDF: () => void;
@@ -71,17 +136,7 @@ export default function TopBar({
             alt="Logo Currículo Interativo" 
             className="w-8 h-8 rounded-lg"
           />
-          <h1 
-            className="text-xl font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent"
-            style={{
-              backgroundImage: 'linear-gradient(to right, #22d3ee, #3b82f6, #8b5cf6)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}
-          >
-            Currículo Interativo
-          </h1>
+                     <AnimatedTitle isDarkTheme={isDarkTheme} />
           {isEditing && (
             <div className="hidden sm:flex items-center space-x-2">
               <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>

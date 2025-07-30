@@ -27,6 +27,8 @@ const mockResume: Resume = {
           githubUrl: "Acesse Agora https://curriculo-interativo.felipe-ac1.workers.dev/",
     acceptingOffers: true,
     salary: "Expectativa Salarial R$ X.000,00",
+    cpf: "000.000.000-00",
+    showCpf: false,
     summary: "De acordo com o Predictive Index possuo o perfil Especialista (mais detalhes na Página 3), apaixonado por tecnologia com experiência em desenvolvimento web moderno usando React, TypeScript e Node.js. Especializado em soluções full-stack escaláveis e arquiteturas cloud-native. Tudo isso combinado com o verdadeiro conhecimento técnico em Inteligência Artificial."
   },
   experiences: [
@@ -34,10 +36,10 @@ const mockResume: Resume = {
       company: "SABINOSEG Corretora de Seguros",
       position: "Sistema Sabinoseg de Produção",
       startDate: "Janeiro de 2020",
-      endDate: "atual",
+      endDate: "Atual",
       location: "Três de Maio, RS",
       description: "Desenvolvi, de forma autônoma e do zero até a implantação em nuvem, um sistema inovador para a corretora, utilizando tecnologias modernas como banco de dados NoSQL, processamento de dados em tempo real e integração de Inteligência Artificial (IA) com Large Language Models (LLM) e modelos treinados personalizados nos fluxos operacionais. O sistema já está em produção, sendo utilizado pela equipe interna.",
-      technologies: ["React", "TypeScript", "Node.js", "AWS", "Cloudflare Full Stack", "JavaScript", "API"]
+      technologies: ["React", "TypeScript", "Node.js", "Cloudflare Full Stack", "JavaScript", "API", "Machine Learning", "IA", "Google Cloud", "Google Workspace Admin"]
     },
     {
       company: "www.sabinoseg.com.br",
@@ -45,7 +47,7 @@ const mockResume: Resume = {
       startDate: "Janeiro de 2020",
       endDate: "Atual",
       location: "Três de Maio, RS",
-      description: "Site otimizado para desktop, tablet e mobile, com tempos de carregamentos extremamente rápidos graças ao pré-processamento de imagens. Tempo de carregamento médio de 1 segundo para cada 300 visitantes. Protótipo desenvolvido no figma.",
+      description: "Site otimizado para desktop, tablet e mobile, com tempos de carregamentos extremamente rápidos graças ao pré-processamento de imagens. Tempo de carregamento médio de 1 segundo para cada 300 visitantes. Protótipo desenvolvido no Figma.",
       technologies: ["React", "Styled Components", "Git", "Figma", "Cloudflare Workers", "TypeScript", "Tailwind CSS"]
     }
   ],
@@ -63,11 +65,11 @@ const mockResume: Resume = {
   skills: [
     {
       category: "Frontend",
-      items: ["React", "TypeScript", "Tailwind CSS", "Figma", "UI e UX", "HTML", "JavaScript"]
+      items: ["React", "TypeScript", "Tailwind CSS", "Figma", "UI e UX", "HTML", "JavaScript", "API"]
     },
     {
       category: "Backend",
-      items: ["Node.js", "Python", "FastAPI", "TypeScript", "JavaScript", "API", "Machine Learning"]
+      items: ["Node.js", "Python", "TypeScript", "JavaScript", "API", "IA", "Machine Learning"]
     },
     {
       category: "DevOps",
@@ -81,7 +83,7 @@ const mockResume: Resume = {
   projects: [
     {
       name: "Currículo Interativo",
-      description: "Sistema que permite criar currículos, desenvolvido com Typescript, Remix, implementado na Cloudflare Workers. As edições são salvas localmente com cookies do navegador.",
+      description: "Sistema que permite criar currículos, desenvolvido com Typescript, Remix, implementado no Cloudflare Workers. As edições são salvas localmente com cookies do navegador.",
       technologies: ["TypeScript", "Cloudflare Workers", "Tailwind CSS"],
       githubUrl: "https://github.com/FelipeSabinoTMRS/curriculo-interativo"
     }

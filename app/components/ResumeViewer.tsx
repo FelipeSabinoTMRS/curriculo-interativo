@@ -1,6 +1,6 @@
 import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
 import type { Resume, Experience, Education, Project, Skill } from '~/types';
-import { Github, Mail, Phone, MapPin, Globe, Palette, Image, Upload, User, DollarSign, CheckCircle, MousePointer } from 'lucide-react';
+import { Github, Mail, Phone, MapPin, Globe, Palette, Image, Upload, User, DollarSign, CheckCircle, MousePointer, Eye, EyeOff } from 'lucide-react';
 import EditableField from "./EditableField";
 
 // Hook que usa useLayoutEffect no cliente e useEffect no servidor
@@ -380,7 +380,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
     }
   };
 
-  const currentData = isEditing ? localResume : resume;
+  const currentData = localResume;
 
   const getWallpaperStyle = () => {
     if (selectedWallpaper.id === 'none') return {};
@@ -1180,8 +1180,8 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                             disabled={!isEditing}
                             className={`h-4 w-4 ${isEditing ? 'cursor-pointer' : 'cursor-default opacity-60'}`}
                             style={{ 
-                              accentColor: selectedTheme.colors.primary,
-                              '--tw-accent-color': selectedTheme.colors.primary
+                              accentColor: isEditing ? '#fbbf24' : selectedTheme.colors.primary,
+                              '--tw-accent-color': isEditing ? '#fbbf24' : selectedTheme.colors.primary
                             } as React.CSSProperties}
                           />
                           <label htmlFor="acceptYes" className={`text-sm ${isEditing ? 'cursor-pointer' : 'cursor-default'} ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -1198,8 +1198,8 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                             disabled={!isEditing}
                             className={`h-4 w-4 ${isEditing ? 'cursor-pointer' : 'cursor-default opacity-60'}`}
                             style={{ 
-                              accentColor: selectedTheme.colors.primary,
-                              '--tw-accent-color': selectedTheme.colors.primary
+                              accentColor: isEditing ? '#fbbf24' : selectedTheme.colors.primary,
+                              '--tw-accent-color': isEditing ? '#fbbf24' : selectedTheme.colors.primary
                             } as React.CSSProperties}
                           />
                           <label htmlFor="acceptNo" className={`text-sm ${isEditing ? 'cursor-pointer' : 'cursor-default'} ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -1207,6 +1207,46 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                           </label>
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Campo CPF */}
+                <div className="flex flex-wrap justify-center items-center gap-4 mt-4">
+                  <div className="flex items-center gap-2">
+                    <User size={16} className="flex-shrink-0 translate-y-[0px] inline-block align-middle" style={{ color: selectedTheme.colors.primary }} />
+                    <span className={`text-sm ${isDarkTheme ? 'text-gray-300 print:text-gray-700' : 'text-gray-700'}`}>
+                      CPF:
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {isEditing ? (
+                        <EditableField
+                          value={currentData.personalInfo.cpf || ''}
+                          onSave={(value) => handleFieldUpdate('personalInfo', 'cpf', value || undefined)}
+                          isEditing={isEditing}
+                          isDarkTheme={isDarkTheme}
+                          type="text"
+                          className={`${isDarkTheme ? 'text-gray-300 print:text-gray-700' : 'text-gray-700'}`}
+                          placeholder="000.000.000-00"
+                        />
+                      ) : (
+                        <span className={`text-sm ${isDarkTheme ? 'text-gray-300 print:text-gray-700' : 'text-gray-700'}`}>
+                          {(currentData.personalInfo.showCpf === true) ? (currentData.personalInfo.cpf || '000.000.000-00') : <EyeOff size={14} className="inline" />}
+                        </span>
+                      )}
+                      {isEditing && (
+                        <button
+                          onClick={() => handleFieldUpdate('personalInfo', 'showCpf', !currentData.personalInfo.showCpf)}
+                          className={`p-1 rounded transition-colors ${
+                            isDarkTheme 
+                              ? 'hover:bg-gray-700 text-yellow-400 hover:text-yellow-300' 
+                              : 'hover:bg-gray-200 text-yellow-500 hover:text-yellow-600'
+                          }`}
+                          title={currentData.personalInfo.showCpf === true ? "Ocultar CPF" : "Mostrar CPF"}
+                        >
+                          {currentData.personalInfo.showCpf === true ? <Eye size={14} /> : <EyeOff size={14} />}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>

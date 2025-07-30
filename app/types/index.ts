@@ -9,6 +9,8 @@ export interface PersonalInfo {
   summary: string;
   salary?: string;
   acceptingOffers?: boolean;
+  cpf?: string;
+  showCpf?: boolean;
 }
 
 export interface Experience {

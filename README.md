@@ -18,7 +18,7 @@ Este projeto permite que você crie um currículo elegante e funcional diretamen
 
 A maneira mais fácil de usar o Currículo Interativo é através da versão web. Acesse o site e comece a criar seu currículo agora mesmo, usando o meu como modelo.
 
-[**Acessar o Currículo Interativo**](https://curriculo-interativo.felipesabino.com.br/) (substitua pela URL final do seu projeto)
+[**Acessar o Currículo Interativo**](https://curriculo-interativo.felipe-ac1.workers.dev/) (substitua pela URL final do seu projeto)
 
 ### Localmente
 
