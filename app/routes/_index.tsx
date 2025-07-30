@@ -12,6 +12,7 @@ export const meta: MetaFunction = () => {
   return [
     { title: "Currículo Interativo - Felipe Sabino" },
     { name: "description", content: "Currículo interativo e responsivo desenvolvido com Remix e Cloudflare" },
+    { rel: "icon", href: "/favicon.ico" },
   ];
 };
 
@@ -85,8 +86,8 @@ const mockResume: Resume = {
       githubUrl: "https://github.com/FelipeSabinoTMRS/curriculo-interativo"
     }
   ],
-  selectedWallpaper: 'none', // Wallpaper padrão
-  profilePhoto: '' // Foto de perfil padrão (vazia)
+  selectedWallpaper: 'pixels', // Wallpaper padrão
+  profilePhoto: '/foto_perfil_felipe.jpg' // Foto de perfil padrão
 };
 
 // Cookie constants
@@ -242,9 +243,14 @@ export default function Index() {
       
       dialog.showSuccess(
         "Dados Limpos!",
-        "Todos os dados salvos foram removidos. O currículo voltou ao estado padrão.",
-        3000
+        "Todos os dados salvos foram removidos. A página será recarregada em 2 segundos.",
+        2000
       );
+      
+      // Recarregar a página após 2 segundos
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     }
   };
 
