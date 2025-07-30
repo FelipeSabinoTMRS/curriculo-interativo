@@ -17,9 +17,9 @@
     "cf:whoami": "wrangler whoami"
   },
   "dependencies": {
-    "@remix-run/cloudflare": "^2.15.1",
-    "@remix-run/react": "^2.15.1",
-    "@remix-run/server-runtime": "^2.15.1",
+    "@remix-run/cloudflare": "^2.16.7",
+    "@remix-run/react": "^2.16.7",
+    "@remix-run/server-runtime": "^2.16.7",
     "html2canvas": "^1.4.1",
     "isbot": "^4.1.0",
     "jspdf": "^3.0.1",
@@ -28,26 +28,26 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250726.0",
-    "@remix-run/dev": "*",
+    "@cloudflare/workers-types": "^4.20241022.0",
+    "@remix-run/dev": "^2.16.7",
     "@types/html2canvas": "^0.5.35",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
-    "autoprefixer": "^10.4.19",
+    "autoprefixer": "^10.4.21",
     "eslint": "^8.38.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.4",
+    "postcss": "^8.5.4",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.1.6",
     "vite": "^6.0.0",
     "vite-tsconfig-paths": "^4.2.1",
-    "wrangler": "^4.26.1"
+    "wrangler": "3.84.0"
   },
   "engines": {
     "node": ">=20.0.0"

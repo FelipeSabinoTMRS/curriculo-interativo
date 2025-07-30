@@ -10,3 +10,7 @@ ENVIRONMENT = "production"
 # Assets configuration - usando [assets] em vez de [site] para melhor compatibilidade
 [assets]
 directory = "./build/client"
+
+# Build command
+[build]
+command = "npm run build"
