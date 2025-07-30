@@ -55,6 +55,11 @@ export interface Resume {
   projects: Project[];
   selectedWallpaper?: string; // ID do wallpaper selecionado
   profilePhoto?: string; // URL da imagem de perfil (base64 ou URL)
+  secondaryDocument?: {
+    enabled: boolean;
+    file?: string; // base64 do PDF
+    fileName?: string;
+  };
 }
 
 export interface ApiResponse<T = any> {

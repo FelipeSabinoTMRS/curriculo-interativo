@@ -1013,6 +1013,84 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                 </div>
               )}
             </div>
+
+            {/* Documento Secundário */}
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
+                Documento Secundário (Página 3)
+              </label>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="secondaryDocumentEnabled"
+                    checked={currentData.secondaryDocument?.enabled || false}
+                    onChange={(e) => {
+                      const secondaryDocument = {
+                        enabled: e.target.checked,
+                        file: e.target.checked ? localResume.secondaryDocument?.file : undefined,
+                        fileName: e.target.checked ? localResume.secondaryDocument?.fileName : undefined
+                      };
+                      
+                      const updatedResume = {
+                        ...localResume,
+                        secondaryDocument
+                      };
+                      setLocalResume(updatedResume);
+                      onFieldChange?.(updatedResume);
+                    }}
+                    className={`h-4 w-4 ${isEditing ? 'cursor-pointer' : 'cursor-default opacity-60'}`}
+                    style={{ 
+                      accentColor: isEditing ? '#fbbf24' : selectedTheme.colors.primary,
+                      '--tw-accent-color': isEditing ? '#fbbf24' : selectedTheme.colors.primary
+                    } as React.CSSProperties}
+                  />
+                  <label htmlFor="secondaryDocumentEnabled" className={`text-sm ${isEditing ? 'cursor-pointer' : 'cursor-default'} ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Incluir documento adicional
+                  </label>
+                </div>
+                
+                {currentData.secondaryDocument?.enabled && (
+                  <div className="space-y-2">
+                    <label className={`block text-sm ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
+                      Arquivo PDF:
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              const base64 = event.target?.result as string;
+                              const updatedResume = {
+                                ...localResume,
+                                secondaryDocument: {
+                                  ...localResume.secondaryDocument,
+                                  file: base64,
+                                  fileName: file.name
+                                }
+                              };
+                              setLocalResume(updatedResume);
+                              onFieldChange?.(updatedResume);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        className={`text-xs ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}
+                      />
+                      {currentData.secondaryDocument?.fileName && (
+                        <span className={`text-xs ${isDarkTheme ? 'text-green-400' : 'text-green-600'}`}>
+                          ✓ {currentData.secondaryDocument.fileName}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}

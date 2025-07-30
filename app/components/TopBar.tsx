@@ -63,9 +63,8 @@ interface TopBarProps {
   isEditing: boolean;
   isDarkTheme: boolean;
   onThemeToggle: () => void;
+  hasSecondaryDocument?: boolean;
 }
-
-
 
 export default function TopBar({ 
   onEdit, 
@@ -73,7 +72,8 @@ export default function TopBar({
   onResetData,
   isEditing, 
   isDarkTheme, 
-  onThemeToggle 
+  onThemeToggle,
+  hasSecondaryDocument
 }: TopBarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -87,8 +87,6 @@ export default function TopBar({
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
   };
-
-  // Usar a função onResetData passada como prop
 
   // Fechar menu quando redimensionar para desktop
   useEffect(() => {
@@ -126,7 +124,7 @@ export default function TopBar({
             alt="Logo Currículo Interativo" 
             className="w-8 h-8 rounded-lg"
           />
-                     <AnimatedTitle isDarkTheme={isDarkTheme} />
+          <AnimatedTitle isDarkTheme={isDarkTheme} />
           {isEditing && (
             <div className="hidden sm:flex items-center space-x-2">
               <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
@@ -154,10 +152,15 @@ export default function TopBar({
           <button 
             onClick={onDownloadPDF}
             disabled={isEditing}
-            className={`btn-sober ${isDarkTheme ? 'dark' : ''} ${isEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`btn-sober ${isDarkTheme ? 'dark' : ''} ${isEditing ? 'opacity-50 cursor-not-allowed' : ''} relative`}
             title={isEditing ? "Finalize a edição primeiro para salvar como PDF" : "Salvar como PDF"}
           >
             <Download size={20} />
+            {hasSecondaryDocument && (
+              <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
+                +1
+              </div>
+            )}
           </button>
 
           <button 
@@ -262,7 +265,7 @@ export default function TopBar({
                 <button 
                   onClick={() => { onDownloadPDF(); closeMobileMenu(); }}
                   disabled={isEditing}
-                  className={`w-full flex items-center space-x-3 p-4 rounded-lg transition-colors ${
+                  className={`w-full flex items-center space-x-3 p-4 rounded-lg transition-colors relative ${
                     isEditing 
                       ? (isDarkTheme ? 'bg-gray-400 text-gray-300 cursor-not-allowed' : 'bg-gray-300 text-gray-500 cursor-not-allowed')
                       : (isDarkTheme ? 'bg-gray-600 hover:bg-gray-700 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-900')
@@ -270,6 +273,11 @@ export default function TopBar({
                 >
                   <Download size={20} />
                   <span>{isEditing ? 'Finalize a edição primeiro' : 'Salvar como PDF'}</span>
+                  {hasSecondaryDocument && (
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
+                      +1
+                    </div>
+                  )}
                 </button>
                 <button 
                   onClick={() => { onResetData(); closeMobileMenu(); }}

@@ -89,7 +89,12 @@ const mockResume: Resume = {
     }
   ],
   selectedWallpaper: 'pixels', // Wallpaper padrão
-  profilePhoto: '/foto_perfil_felipe.jpg' // Foto de perfil padrão
+  profilePhoto: '/foto_perfil_felipe.jpg', // Foto de perfil padrão
+  secondaryDocument: {
+    enabled: false,
+    file: undefined,
+    fileName: undefined
+  }
 };
 
 // Cookie constants
@@ -621,6 +626,53 @@ export default function Index() {
       // Gerar nome do arquivo com data/hora
       const now = new Date();
       const timestamp = now.toISOString().slice(0, 16).replace(/[T:]/g, '-');
+
+      // Verificar se há documento secundário para mesclar
+      if (resumeData.secondaryDocument?.enabled && resumeData.secondaryDocument?.file) {
+        try {
+          // Importar dinamicamente pdf-lib
+          const { PDFDocument } = await import('pdf-lib');
+          
+          // Obter o PDF principal como ArrayBuffer
+          const mainPdfBytes = pdf.output('arraybuffer');
+          const mainPdfDoc = await PDFDocument.load(mainPdfBytes);
+          
+          // Converter o PDF secundário de base64 para Uint8Array
+          const secondaryPdfBase64 = resumeData.secondaryDocument.file;
+          const secondaryPdfBytes = Uint8Array.from(atob(secondaryPdfBase64.split(',')[1]), c => c.charCodeAt(0));
+          const secondaryPdfDoc = await PDFDocument.load(secondaryPdfBytes);
+          
+          // Copiar todas as páginas do secundário para o principal
+          const secondaryPages = await mainPdfDoc.copyPages(secondaryPdfDoc, secondaryPdfDoc.getPageIndices());
+          secondaryPages.forEach((page) => mainPdfDoc.addPage(page));
+          
+          // Salvar o PDF final
+          const finalPdfBytes = await mainPdfDoc.save();
+          
+          // Criar blob e fazer download
+          const blob = new Blob([finalPdfBytes], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `curriculo-felipe-sabino-${timestamp}.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          
+          // Mostrar mensagem de sucesso
+          dialog.showSuccess(
+            "PDF gerado com sucesso!",
+            `O arquivo "${link.download}" foi salvo na pasta de downloads com o documento adicional.`,
+            3000
+          );
+          return;
+        } catch (mergeError) {
+          console.error("Erro ao mesclar PDFs:", mergeError);
+          // Se falhar a mesclagem, continuar com o PDF normal
+        }
+      }
+
       const fileName = `curriculo-felipe-sabino-${timestamp}.pdf`;
 
       // Fazer download do PDF
@@ -665,13 +717,14 @@ export default function Index() {
       <div className={`relative z-10 ${isDarkTheme ? 'bg-gray-900/95' : 'bg-gray-200'} backdrop-blur-sm min-h-screen`}>
         <div className="px-1 py-0 sm:py-1 md:py-1 lg:py-2 sm:px-1.5 md:px-2 no-print">
                      <TopBar 
-             onEdit={handleEditToggle}
-             onDownloadPDF={handleDownloadPDF}
-             onResetData={handleResetData}
-             isEditing={isEditing}
-             isDarkTheme={isDarkTheme}
-             onThemeToggle={handleThemeToggle}
-           />
+            onEdit={handleEditToggle}
+            onDownloadPDF={handleDownloadPDF}
+            onResetData={handleResetData}
+            isEditing={isEditing}
+            isDarkTheme={isDarkTheme}
+            onThemeToggle={handleThemeToggle}
+            hasSecondaryDocument={!!resumeData.secondaryDocument?.enabled && !!resumeData.secondaryDocument?.file}
+          />
           <ResumeViewer 
             resume={resumeData} 
             isDarkTheme={isDarkTheme}
