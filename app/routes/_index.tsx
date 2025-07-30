@@ -26,7 +26,7 @@ const mockResume: Resume = {
     location: "Três de Maio, RS",
           githubUrl: "Acesse Agora https://curriculo-interativo.felipe-ac1.workers.dev/",
     acceptingOffers: true,
-    salary: "Exp. Salarial R$ X.000,00",
+    salary: "Expectativa Salarial R$ X.000,00",
     summary: "De acordo com o Predictive Index possuo o perfil Especialista (mais detalhes na Página 3), apaixonado por tecnologia com experiência em desenvolvimento web moderno usando React, TypeScript e Node.js. Especializado em soluções full-stack escaláveis e arquiteturas cloud-native. Tudo isso combinado com o verdadeiro conhecimento técnico em Inteligência Artificial."
   },
   experiences: [

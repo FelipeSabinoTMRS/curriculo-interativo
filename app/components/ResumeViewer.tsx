@@ -657,10 +657,10 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                 isEditing={isEditing}
                 isDarkTheme={isDarkTheme}
                 className={`px-3 py-1 text-sm font-medium rounded-full overflow-hidden whitespace-normal break-words max-w-full ${
-                  isDarkTheme ? 'bg-gray-600 text-white print:text-gray-800' : 'text-gray-800'
+                  isDarkTheme ? 'text-white print:text-gray-800' : 'text-gray-800'
                 }`}
                 style={{ 
-                  backgroundColor: selectedTheme.colors.background,
+                  background: `linear-gradient(to top, ${selectedTheme.colors.background}, transparent)`,
                   color: selectedTheme.colors.secondary,
                   padding: '0.35rem 0.75rem',
                   lineHeight: '1.2',
@@ -777,7 +777,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                   isDarkTheme ? 'text-white print:text-black' : 'text-black'
                 }`}
                 style={{ 
-                  backgroundColor: selectedTheme.colors.background,
+                  background: `linear-gradient(to top, ${selectedTheme.colors.background}, transparent)`,
                   color: selectedTheme.colors.secondary,
                   padding: '0.35rem 0.75rem',
                   lineHeight: '1.2'
@@ -1130,7 +1130,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                      <span className="text-xs font-medium text-blue-600">
                         Acesse Agora
                       </span>
                       <EditableField
