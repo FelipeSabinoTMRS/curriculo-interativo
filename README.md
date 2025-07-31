@@ -18,7 +18,7 @@ Este projeto permite que você crie um currículo elegante e funcional diretamen
 
 A maneira mais fácil de usar o Currículo Interativo é através da versão web. Acesse o site e comece a criar seu currículo agora mesmo, usando o meu como modelo.
 
-[**Acessar o Currículo Interativo**](https://curriculo-interativo.felipe-ac1.workers.dev/) (substitua pela URL final do seu projeto)
+[**Acessar o Currículo Interativo**](https://curriculo-interativo.felipe-ac1.workers.dev/) 
 
 ### Localmente
 
@@ -43,7 +43,7 @@ Se você deseja explorar o código-fonte ou contribuir para o projeto, siga os p
     npm run dev
     ```
 
-Agora você pode acessar `http://localhost:3000` no seu navegador para ver a aplicação rodando localmente.
+Agora você pode acessar `http://localhost:5173` no seu navegador para ver a aplicação rodando localmente.
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -51,8 +51,8 @@ Agora você pode acessar `http://localhost:3000` no seu navegador para ver a apl
 - **React:** Biblioteca para construção de interfaces de usuário.
 - **TypeScript:** Superset do JavaScript que adiciona tipagem estática.
 - **Tailwind CSS:** Framework de CSS para estilização rápida e responsiva.
-- **Cloudflare Pages:** Plataforma para deploy e hospedagem do projeto.
+- **Cloudflare Workers:** Plataforma para deploy e hospedagem do projeto.
 
 ---
 
-Feito com ❤️ por [Felipe Sabino](https://github.com/FelipeSabinoTMRS)
+Feito com ☕ por [Felipe Sabino](https://github.com/FelipeSabinoTMRS)
