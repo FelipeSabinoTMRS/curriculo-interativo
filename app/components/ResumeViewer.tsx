@@ -3,9 +3,6 @@ import type { Resume, Experience, Education, Project, Skill } from '~/types';
 import { Github, Mail, Phone, MapPin, Globe, Palette, Image, Upload, User, DollarSign, CheckCircle, MousePointer, Eye, EyeOff } from 'lucide-react';
 import EditableField from "./EditableField";
 
-// Hook que usa useLayoutEffect no cliente e useEffect no servidor
-const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
-
 interface ResumeViewerProps {
   resume: Resume;
   isDarkTheme?: boolean;
@@ -136,75 +133,83 @@ const profilePhotos = [
   'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?w=150&h=150&fit=crop&crop=face'
 ];
 
-// Função utilitária para preview do wallpaper
-function getWallpaperPreviewStyle(wallpaperId: string) {
-  switch (wallpaperId) {
-    case 'dots':
-      return {
-        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyIiBmaWxsPSIjZmYwMDAwIiBvcGFjaXR5PSIwLjgiLz48L3N2Zz4=")',
-        backgroundSize: '40px 40px',
-        backgroundRepeat: 'repeat',
-      };
-    case 'grid':
-      return {
-        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCAwaDUwdjNIMHpNMCAwdjUwaDNIMHoiIGZpbGw9IiMwMGZmMDAiIG9wYWNpdHk9IjAuNiIvPjwvc3ZnPg==")',
-        backgroundSize: '50px 50px',
-        backgroundRepeat: 'repeat',
-      };
-    case 'circles':
-      return {
-        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwZmYiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC43Ii8+PC9zdmc+")',
-        backgroundSize: '60px 60px',
-        backgroundRepeat: 'repeat',
-      };
-    case 'squares':
-      return {
-        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmY2NjAwIiBzdHJva2Utd2lkdGg9IjIiIG9wYWNpdHk9IjAuOCIvPjwvc3ZnPg==")',
-        backgroundSize: '40px 40px',
-        backgroundRepeat: 'repeat',
-      };
-    case 'pixels':
-      return {
-        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxMjAiIGZpbGw9InRyYW5zcGFyZW50Ii8+PHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZGRkZGRkIiBvcGFjaXR5PSIwLjYiLz48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNhZGQ4ZmYiIG9wYWNpdHk9IjAuNyIvPjxyZWN0IHg9IjMwIiB5PSIzMCIgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0iI2RkZGRkZCIgb3BhY2l0eT0iMC42Ii8+PHJlY3QgeD0iODAiIHk9IjgwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48cmVjdCB4PSI5MCIgeT0iOTAiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNkZGRkZGQiIG9wYWNpdHk9IjAuNiIvPjxyZWN0IHg9IjEwMCIgeT0iMTAwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48cmVjdCB4PSIxMCIgeT0iMTAwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZGRkZGRkIiBvcGFjaXR5PSIwLjYiLz48cmVjdCB4PSIyMCIgeT0iMTEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48cmVjdCB4PSIxMDAiIHk9IjEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZGRkZGRkIiBvcGFjaXR5PSIwLjYiLz48cmVjdCB4PSIxMTAiIHk9IjIwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48L3N2Zz4=")',
-        backgroundSize: '120px 120px',
-        backgroundRepeat: 'repeat',
-      };
-    default:
-      return {};
-  }
-}
-
 export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = false, onFieldChange }: ResumeViewerProps) {
   const { personalInfo, experiences, education, skills, projects } = resume;
   const containerRef = useRef<HTMLDivElement>(null);
   const [marginBottom, setMarginBottom] = useState(0);
   
+  // Hook que usa useLayoutEffect no cliente e useEffect no servidor
+  const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+  
+  // Verificação de segurança para dados
+  const safeResume = {
+    personalInfo: personalInfo || {},
+    experiences: experiences || [],
+    education: education || [],
+    skills: skills || [],
+    projects: projects || [],
+    selectedWallpaper: resume.selectedWallpaper || 'none',
+    selectedTheme: resume.selectedTheme || 'default',
+    profilePhoto: resume.profilePhoto || '',
+    secondaryDocument: resume.secondaryDocument || { enabled: false }
+  };
+  
   // Estados locais para edição
-  const [localResume, setLocalResume] = useState<Resume>(resume);
+  const [localResume, setLocalResume] = useState<Resume>(safeResume);
   const [selectedTheme, setSelectedTheme] = useState<Theme>(() => {
-    // Inicializar com o tema salvo ou o primeiro disponível
-    const savedThemeId = resume.selectedTheme;
-    if (savedThemeId) {
-      const savedTheme = themes.find(t => t.id === savedThemeId);
-      return savedTheme || themes[0];
-    }
-    return themes[0];
+    const savedThemeId = safeResume.selectedTheme;
+    const savedTheme = themes.find(t => t.id === savedThemeId);
+    return savedTheme || themes[0];
   });
   const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper>(() => {
-    // Inicializar com o wallpaper salvo ou o primeiro disponível
-    const savedWallpaperId = resume.selectedWallpaper;
-    if (savedWallpaperId) {
-      const savedWallpaper = wallpapers.find(w => w.id === savedWallpaperId);
-      return savedWallpaper || wallpapers[0];
-    }
-    return wallpapers[0];
+    const savedWallpaperId = safeResume.selectedWallpaper;
+    const savedWallpaper = wallpapers.find(w => w.id === savedWallpaperId);
+    return savedWallpaper || wallpapers[0];
   });
-  const [profilePhoto, setProfilePhoto] = useState<string>(resume.profilePhoto || '');
+  const [profilePhoto, setProfilePhoto] = useState<string>(safeResume.profilePhoto || '');
   const [showThemePalette, setShowThemePalette] = useState(false);
   const [showWallpaperSelector, setShowWallpaperSelector] = useState(false);
   const [showProfileSelector, setShowProfileSelector] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [currentScale, setCurrentScale] = useState(1); // Escala controlada por estado
+
+  // Função utilitária para preview do wallpaper
+  const getWallpaperPreviewStyle = (wallpaperId: string) => {
+    switch (wallpaperId) {
+      case 'dots':
+        return {
+          backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyIiBmaWxsPSIjZmYwMDAwIiBvcGFjaXR5PSIwLjgiLz48L3N2Zz4=")',
+          backgroundSize: '40px 40px',
+          backgroundRepeat: 'repeat',
+        };
+      case 'grid':
+        return {
+          backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCAwaDUwdjNIMHpNMCAwdjUwaDNIMHoiIGZpbGw9IiMwMGZmMDAiIG9wYWNpdHk9IjAuNiIvPjwvc3ZnPg==")',
+          backgroundSize: '50px 50px',
+          backgroundRepeat: 'repeat',
+        };
+      case 'circles':
+        return {
+          backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwZmYiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC43Ii8+PC9zdmc+")',
+          backgroundSize: '60px 60px',
+          backgroundRepeat: 'repeat',
+        };
+      case 'squares':
+        return {
+          backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmY2NjAwIiBzdHJva2Utd2lkdGg9IjIiIG9wYWNpdHk9IjAuOCIvPjwvc3ZnPg==")',
+          backgroundSize: '40px 40px',
+          backgroundRepeat: 'repeat',
+        };
+      case 'pixels':
+        return {
+          backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxMjAiIGZpbGw9InRyYW5zcGFyZW50Ii8+PHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZGRkZGRkIiBvcGFjaXR5PSIwLjYiLz48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNhZGQ4ZmYiIG9wYWNpdHk9IjAuNyIvPjxyZWN0IHg9IjMwIiB5PSIzMCIgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0iI2RkZGRkZCIgb3BhY2l0eT0iMC42Ii8+PHJlY3QgeD0iODAiIHk9IjgwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48cmVjdCB4PSI5MCIgeT0iOTAiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNkZGRkZGQiIG9wYWNpdHk9IjAuNiIvPjxyZWN0IHg9IjEwMCIgeT0iMTAwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48cmVjdCB4PSIxMCIgeT0iMTAwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZGRkZGRkIiBvcGFjaXR5PSIwLjYiLz48cmVjdCB4PSIyMCIgeT0iMTEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48cmVjdCB4PSIxMDAiIHk9IjEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZGRkZGRkIiBvcGFjaXR5PSIwLjYiLz48cmVjdCB4PSIxMTAiIHk9IjIwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48L3N2Zz4=")',
+          backgroundSize: '120px 120px',
+          backgroundRepeat: 'repeat',
+        };
+      default:
+        return {};
+    }
+  };
 
   // Sincronizar com prop quando não estiver editando
   useEffect(() => {
@@ -235,28 +240,6 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
       }
     }
   }, [resume, isEditing]);
-
-  // Sincronizar tema sempre que o resume mudar (incluindo carregamento inicial)
-  useEffect(() => {
-    const savedThemeId = resume.selectedTheme;
-    if (savedThemeId) {
-      const savedTheme = themes.find(t => t.id === savedThemeId);
-      if (savedTheme) {
-        setSelectedTheme(savedTheme);
-      }
-    }
-  }, [resume.selectedTheme]);
-
-  // Sincronizar wallpaper sempre que o resume mudar (incluindo carregamento inicial)
-  useEffect(() => {
-    const savedWallpaperId = resume.selectedWallpaper;
-    if (savedWallpaperId) {
-      const savedWallpaper = wallpapers.find(w => w.id === savedWallpaperId);
-      if (savedWallpaper) {
-        setSelectedWallpaper(savedWallpaper);
-      }
-    }
-  }, [resume.selectedWallpaper]);
 
   // Inicialização e cálculo de escala inicial
   useEffect(() => {
@@ -311,43 +294,26 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
     // Aguardar inicialização para evitar cálculos com DOM incompleto
     if (!isInitialized || !containerRef.current) return;
     
-    let timeoutIds: any[] = [];
-    let isActive = true;
-    
     function updateMargin() {
-      if (!isActive || !containerRef.current) return;
+      if (!containerRef.current) return;
       
       const realHeight = containerRef.current.offsetHeight;
       
       // Aguardar se o elemento ainda não tem altura real
       if (realHeight === 0) {
-        if (isActive) {
-          timeoutIds.push(setTimeout(updateMargin, 50));
-        }
+        setTimeout(updateMargin, 50);
         return;
       }
       
       const scaledHeight = realHeight * currentScale;
       const marginCompensation = -(realHeight - scaledHeight);
       
-      if (isActive) {
-        setMarginBottom(marginCompensation);
-      }
+      setMarginBottom(marginCompensation);
     }
 
-    // Calcular imediatamente e com retry se necessário
+    // Calcular imediatamente
     updateMargin();
-    
-    timeoutIds.push(
-      setTimeout(() => isActive && updateMargin(), 16),
-      setTimeout(() => isActive && updateMargin(), 100)
-    );
-    
-    return () => {
-      isActive = false;
-      timeoutIds.forEach(id => clearTimeout(id as any));
-    };
-  }, [currentScale, isInitialized, localResume, isEditing]);
+  }, [currentScale, isInitialized]);
 
   const handleFieldUpdate = (section: string, field: string, value: any) => {
     console.log('ResumeViewer handleFieldUpdate chamado:', { section, field, value });
@@ -434,7 +400,15 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
     
     setLocalResume(updatedResume);
     console.log('ResumeViewer chamando onFieldChange com:', updatedResume);
-    onFieldChange?.(updatedResume);
+    
+    // Verificação de segurança antes de chamar onFieldChange
+    if (onFieldChange && typeof onFieldChange === 'function') {
+      try {
+        onFieldChange(updatedResume);
+      } catch (error) {
+        console.error('Erro ao chamar onFieldChange:', error);
+      }
+    }
   };
 
   const handleProfilePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -457,7 +431,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
     }
   };
 
-  const currentData = localResume;
+  const currentData = localResume || safeResume;
 
   const getWallpaperStyle = () => {
     if (selectedWallpaper.id === 'none') return {};
@@ -1191,11 +1165,13 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
           style={{
             transform: `scale(${currentScale})`,
             transformOrigin: "top center",
+            marginTop: "0",
+            marginLeft: "auto",
+            marginRight: "auto",
             marginBottom: `${marginBottom}px`,
             transition: "transform 0.3s ease-in-out, margin-bottom 0.3s ease-in-out",
             width: "210mm",  // Largura exata A4
-            maxWidth: "100%",
-            margin: "0 auto"
+            maxWidth: "100%"
           }}
           ref={containerRef}
         >
