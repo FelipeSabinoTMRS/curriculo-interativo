@@ -136,6 +136,44 @@ const profilePhotos = [
   'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?w=150&h=150&fit=crop&crop=face'
 ];
 
+// Função utilitária para preview do wallpaper
+function getWallpaperPreviewStyle(wallpaperId: string) {
+  switch (wallpaperId) {
+    case 'dots':
+      return {
+        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyIiBmaWxsPSIjZmYwMDAwIiBvcGFjaXR5PSIwLjgiLz48L3N2Zz4=")',
+        backgroundSize: '40px 40px',
+        backgroundRepeat: 'repeat',
+      };
+    case 'grid':
+      return {
+        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCAwaDUwdjNIMHpNMCAwdjUwaDNIMHoiIGZpbGw9IiMwMGZmMDAiIG9wYWNpdHk9IjAuNiIvPjwvc3ZnPg==")',
+        backgroundSize: '50px 50px',
+        backgroundRepeat: 'repeat',
+      };
+    case 'circles':
+      return {
+        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwZmYiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iMC43Ii8+PC9zdmc+")',
+        backgroundSize: '60px 60px',
+        backgroundRepeat: 'repeat',
+      };
+    case 'squares':
+      return {
+        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmY2NjAwIiBzdHJva2Utd2lkdGg9IjIiIG9wYWNpdHk9IjAuOCIvPjwvc3ZnPg==")',
+        backgroundSize: '40px 40px',
+        backgroundRepeat: 'repeat',
+      };
+    case 'pixels':
+      return {
+        backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxMjAiIGZpbGw9InRyYW5zcGFyZW50Ii8+PHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZGRkZGRkIiBvcGFjaXR5PSIwLjYiLz48cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNhZGQ4ZmYiIG9wYWNpdHk9IjAuNyIvPjxyZWN0IHg9IjMwIiB5PSIzMCIgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0iI2RkZGRkZCIgb3BhY2l0eT0iMC42Ii8+PHJlY3QgeD0iODAiIHk9IjgwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48cmVjdCB4PSI5MCIgeT0iOTAiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNkZGRkZGQiIG9wYWNpdHk9IjAuNiIvPjxyZWN0IHg9IjEwMCIgeT0iMTAwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48cmVjdCB4PSIxMCIgeT0iMTAwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZGRkZGRkIiBvcGFjaXR5PSIwLjYiLz48cmVjdCB4PSIyMCIgeT0iMTEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48cmVjdCB4PSIxMDAiIHk9IjEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZGRkZGRkIiBvcGFjaXR5PSIwLjYiLz48cmVjdCB4PSIxMTAiIHk9IjIwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjYWRkOGZmIiBvcGFjaXR5PSIwLjciLz48L3N2Zz4=")',
+        backgroundSize: '120px 120px',
+        backgroundRepeat: 'repeat',
+      };
+    default:
+      return {};
+  }
+}
+
 export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = false, onFieldChange }: ResumeViewerProps) {
   const { personalInfo, experiences, education, skills, projects } = resume;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -143,7 +181,15 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
   
   // Estados locais para edição
   const [localResume, setLocalResume] = useState<Resume>(resume);
-  const [selectedTheme, setSelectedTheme] = useState<Theme>(themes[0]);
+  const [selectedTheme, setSelectedTheme] = useState<Theme>(() => {
+    // Inicializar com o tema salvo ou o primeiro disponível
+    const savedThemeId = resume.selectedTheme;
+    if (savedThemeId) {
+      const savedTheme = themes.find(t => t.id === savedThemeId);
+      return savedTheme || themes[0];
+    }
+    return themes[0];
+  });
   const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper>(() => {
     // Inicializar com o wallpaper salvo ou o primeiro disponível
     const savedWallpaperId = resume.selectedWallpaper;
@@ -165,6 +211,15 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
     if (!isEditing) {
       setLocalResume(resume);
       
+      // Sincronizar tema selecionado
+      const savedThemeId = resume.selectedTheme;
+      if (savedThemeId) {
+        const savedTheme = themes.find(t => t.id === savedThemeId);
+        if (savedTheme) {
+          setSelectedTheme(savedTheme);
+        }
+      }
+      
       // Sincronizar wallpaper selecionado
       const savedWallpaperId = resume.selectedWallpaper;
       if (savedWallpaperId) {
@@ -180,6 +235,28 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
       }
     }
   }, [resume, isEditing]);
+
+  // Sincronizar tema sempre que o resume mudar (incluindo carregamento inicial)
+  useEffect(() => {
+    const savedThemeId = resume.selectedTheme;
+    if (savedThemeId) {
+      const savedTheme = themes.find(t => t.id === savedThemeId);
+      if (savedTheme) {
+        setSelectedTheme(savedTheme);
+      }
+    }
+  }, [resume.selectedTheme]);
+
+  // Sincronizar wallpaper sempre que o resume mudar (incluindo carregamento inicial)
+  useEffect(() => {
+    const savedWallpaperId = resume.selectedWallpaper;
+    if (savedWallpaperId) {
+      const savedWallpaper = wallpapers.find(w => w.id === savedWallpaperId);
+      if (savedWallpaper) {
+        setSelectedWallpaper(savedWallpaper);
+      }
+    }
+  }, [resume.selectedWallpaper]);
 
   // Inicialização e cálculo de escala inicial
   useEffect(() => {
@@ -935,7 +1012,14 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                       onClick={() => {
                         setSelectedTheme(theme);
                         setShowThemePalette(false);
-                        onFieldChange?.(localResume);
+                        
+                        // Atualizar o currículo com o tema selecionado
+                        const updatedResume = {
+                          ...localResume,
+                          selectedTheme: theme.id
+                        };
+                        setLocalResume(updatedResume);
+                        onFieldChange?.(updatedResume);
                       }}
                       className={`w-full flex items-center space-x-3 p-2 rounded transition-colors ${
                         selectedTheme.id === theme.id 
@@ -1001,11 +1085,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                       {wallpaper.pattern && (
                         <div 
                           className="w-8 h-8 rounded border"
-                          style={{
-                            backgroundImage: `url("${wallpaper.pattern}")`,
-                            backgroundRepeat: 'repeat',
-                            backgroundSize: '10px 10px'
-                          }}
+                          style={getWallpaperPreviewStyle(wallpaper.id)}
                         ></div>
                       )}
                     </button>
@@ -1069,6 +1149,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                                 ...localResume,
                                 secondaryDocument: {
                                   ...localResume.secondaryDocument,
+                                  enabled: localResume.secondaryDocument?.enabled || false,
                                   file: base64,
                                   fileName: file.name
                                 }
@@ -1205,7 +1286,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-blue-600">
+                      <span className="text-xs font-medium" style={{ color: selectedTheme.colors.primary }}>
                         Acesse Agora
                       </span>
                       <EditableField

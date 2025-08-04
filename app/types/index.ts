@@ -54,6 +54,7 @@ export interface Resume {
   skills: Skill[];
   projects: Project[];
   selectedWallpaper?: string; // ID do wallpaper selecionado
+  selectedTheme?: string; // ID do tema selecionado
   profilePhoto?: string; // URL da imagem de perfil (base64 ou URL)
   secondaryDocument?: {
     enabled: boolean;

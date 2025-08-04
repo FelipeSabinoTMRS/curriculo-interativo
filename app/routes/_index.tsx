@@ -89,6 +89,7 @@ const mockResume: Resume = {
     }
   ],
   selectedWallpaper: 'pixels', // Wallpaper padrão
+  selectedTheme: 'default', // Tema padrão (azul clássico)
   profilePhoto: '/foto_perfil_felipe.jpg', // Foto de perfil padrão
   secondaryDocument: {
     enabled: false,
@@ -117,7 +118,7 @@ export default function Index() {
   // Carregar tema e dados do currículo
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // Carregar tema
+      // Salvar tema no localStorage sempre que mudar
       localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
       
       // Carregar dados salvos do currículo ou usar mockResume como padrão
@@ -233,7 +234,12 @@ export default function Index() {
   };
 
   const handleThemeToggle = () => {
-    setIsDarkTheme(!isDarkTheme);
+    const newTheme = !isDarkTheme;
+    setIsDarkTheme(newTheme);
+    // Salvar tema no localStorage imediatamente
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    }
   };
 
   // Função para limpar dados salvos (usada pelo botão "Limpar Dados Salvos")
@@ -782,8 +788,11 @@ export default function Index() {
       
       const timestamp = `${day}-${month}-${year}-${hours}-${minutes}`;
       
-      // Extrair o primeiro nome do usuário do currículo
-      const userName = resumeData.personalInfo.name.split(' ')[0].toLowerCase();
+      // Extrair o primeiro nome do usuário do currículo e remover acentos/cedilhas
+      const removeAccents = (str: string) => {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      };
+      const userName = removeAccents(resumeData.personalInfo.name.split(' ')[0]);
 
       // Verificar se há documento secundário para mesclar
       if (resumeData.secondaryDocument?.enabled && resumeData.secondaryDocument?.file) {
