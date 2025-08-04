@@ -343,7 +343,7 @@ export default function Index() {
         resumeContainer.classList.remove('dark-theme');
         resumeContainer.querySelectorAll('.bg-gray-900, .bg-gray-800, .bg-gray-700, .text-white, .text-gray-300')
           .forEach(element => {
-            const el = element as HTMLElement;
+        const el = element as HTMLElement;
             el.dataset.originalClasses = el.className;
             
             // Substituir classes escuras por claras
@@ -680,17 +680,17 @@ export default function Index() {
           const link = document.createElement('a');
           link.href = url;
           link.download = fileName;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
-          
-          // Mostrar mensagem de sucesso
-          dialog.showSuccess(
-            "PDF gerado com sucesso!",
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            // Mostrar mensagem de sucesso
+            dialog.showSuccess(
+              "PDF gerado com sucesso!",
             `O arquivo "${fileName}" foi salvo na pasta de downloads com o documento adicional.`,
-            3000
-          );
+              3000
+            );
           return;
         } catch (mergeError) {
           console.error("Erro ao mesclar PDFs:", mergeError);
@@ -699,20 +699,20 @@ export default function Index() {
       }
 
       // Fazer download do PDF
-      pdf.save(fileName);
-
-      // Mostrar mensagem de sucesso
-      dialog.showSuccess(
-        "PDF gerado com sucesso!",
-        `O arquivo "${fileName}" foi salvo na pasta de downloads.`,
-        3000
-      );
+        pdf.save(fileName);
+        
+        // Mostrar mensagem de sucesso
+        dialog.showSuccess(
+          "PDF gerado com sucesso!",
+          `O arquivo "${fileName}" foi salvo na pasta de downloads.`,
+          3000
+        );
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
-      dialog.showError(
-        "Erro ao gerar PDF",
-        "Não foi possível criar o arquivo PDF. Por favor, tente novamente."
-      );
+        dialog.showError(
+          "Erro ao gerar PDF",
+          "Não foi possível criar o arquivo PDF. Por favor, tente novamente."
+        );
     }
   };
 

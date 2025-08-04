@@ -156,22 +156,18 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
   
   // Estados locais para edição
   const [localResume, setLocalResume] = useState<Resume>(safeResume);
-  const [selectedTheme, setSelectedTheme] = useState<Theme>(() => {
-    const savedThemeId = safeResume.selectedTheme;
-    const savedTheme = themes.find(t => t.id === savedThemeId);
-    return savedTheme || themes[0];
-  });
-  const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper>(() => {
-    const savedWallpaperId = safeResume.selectedWallpaper;
-    const savedWallpaper = wallpapers.find(w => w.id === savedWallpaperId);
-    return savedWallpaper || wallpapers[0];
-  });
-  const [profilePhoto, setProfilePhoto] = useState<string>(safeResume.profilePhoto || '');
+  const [selectedTheme, setSelectedTheme] = useState<Theme>(themes[0]); // Valor padrão para evitar hidratação
+  const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper>(wallpapers[0]); // Valor padrão para evitar hidratação
+  const [profilePhoto, setProfilePhoto] = useState<string>('');
   const [showThemePalette, setShowThemePalette] = useState(false);
   const [showWallpaperSelector, setShowWallpaperSelector] = useState(false);
   const [showProfileSelector, setShowProfileSelector] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [currentScale, setCurrentScale] = useState(1);
+  const [isClient, setIsClient] = useState(false);
+
+  // Dados atuais - sempre usar safeResume para evitar hidratação
+  const currentData = isClient ? (localResume || safeResume) : safeResume;
 
   // Função utilitária para preview do wallpaper
   const getWallpaperPreviewStyle = useCallback((wallpaperId: string) => {
@@ -213,7 +209,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
 
   // Sincronizar com prop quando não estiver editando
   useEffect(() => {
-    if (!isEditing) {
+    if (!isEditing && isClient) {
       setLocalResume(resume);
       
       // Sincronizar tema selecionado
@@ -239,10 +235,45 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
         setProfilePhoto(resume.profilePhoto);
       }
     }
-  }, [resume, isEditing]);
+  }, [resume, isEditing, isClient]);
+
+  // Sincronização inicial quando o cliente está pronto
+  useEffect(() => {
+    if (isClient) {
+      // Sincronizar tema selecionado
+      const savedThemeId = resume.selectedTheme;
+      if (savedThemeId) {
+        const savedTheme = themes.find(t => t.id === savedThemeId);
+        if (savedTheme) {
+          setSelectedTheme(savedTheme);
+        }
+      }
+      
+      // Sincronizar wallpaper selecionado
+      const savedWallpaperId = resume.selectedWallpaper;
+      if (savedWallpaperId) {
+        const savedWallpaper = wallpapers.find(w => w.id === savedWallpaperId);
+        if (savedWallpaper) {
+          setSelectedWallpaper(savedWallpaper);
+        }
+      }
+      
+      // Sincronizar foto de perfil
+      if (resume.profilePhoto) {
+        setProfilePhoto(resume.profilePhoto);
+      }
+    }
+  }, [isClient, resume.selectedTheme, resume.selectedWallpaper, resume.profilePhoto]);
+
+  // Marcar que estamos no cliente para evitar problemas de hidratação
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Inicialização e cálculo de escala inicial
   useEffect(() => {
+    if (!isClient) return; // Só executar no cliente
+    
     function initializeScale() {
       const scale = getScale();
       setCurrentScale(scale);
@@ -265,14 +296,14 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('orientationchange', handleResize);
     };
-  }, []);
+  }, [isClient]);
 
   /**
    * Calcula o fator de escala baseado na largura da viewport
    * Breakpoints correspondentes aos definidos no CSS do debug panel
    */
   function getScale(): number {
-    if (typeof window === 'undefined') return 1;
+    if (typeof window === 'undefined' || !isClient) return 1;
     
     const width = window.innerWidth;
     
@@ -290,7 +321,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
    */
   useIsomorphicLayoutEffect(() => {
     // Aguardar inicialização para evitar cálculos com DOM incompleto
-    if (!isInitialized || !containerRef.current) return;
+    if (!isClient || !isInitialized || !containerRef.current) return;
     
     function updateMargin() {
       if (!containerRef.current) return;
@@ -311,7 +342,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
 
     // Calcular imediatamente
     updateMargin();
-  }, [currentScale, isInitialized]);
+  }, [currentScale, isInitialized, isClient]);
 
   const handleFieldUpdate = (section: string, field: string, value: any) => {
     console.log('ResumeViewer handleFieldUpdate chamado:', { section, field, value });
@@ -428,8 +459,6 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
       reader.readAsDataURL(file);
     }
   };
-
-  const currentData = localResume || safeResume;
 
   const getWallpaperStyle = () => {
     if (selectedWallpaper.id === 'none') return {};
@@ -885,7 +914,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
               </label>
               <div className="flex items-center space-x-3">
                 <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
-                  {profilePhoto ? (
+                  {isClient && profilePhoto ? (
                     <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover object-center scale-110" />
                   ) : (
                     <User size={24} className="text-gray-400" />
@@ -1102,7 +1131,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                   </label>
                 </div>
                 
-                {currentData.secondaryDocument?.enabled && (
+                {isClient && currentData.secondaryDocument?.enabled && (
                   <div className="space-y-2">
                     <label className={`block text-sm ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
                       Arquivo PDF:
@@ -1134,7 +1163,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                         }}
                         className={`text-xs ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}
                       />
-                      {currentData.secondaryDocument?.fileName && (
+                      {isClient && currentData.secondaryDocument?.fileName && (
                         <span className={`text-xs ${isDarkTheme ? 'text-green-400' : 'text-green-600'}`}>
                           ✓ {currentData.secondaryDocument.fileName}
                         </span>
@@ -1195,7 +1224,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
               {/* Foto de Perfil */}
               <div className="absolute top-8 left-8 w-36 h-36 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center border-4" 
                    style={{ borderColor: selectedTheme.colors.primary }}>
-                {profilePhoto ? (
+                {isClient && profilePhoto ? (
                   <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover object-center scale-110" />
                 ) : (
                   <User size={48} className="text-gray-400" />
@@ -1364,7 +1393,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                         />
                       ) : (
                         <span className={`text-sm ${isDarkTheme ? 'text-gray-300 print:text-gray-700' : 'text-gray-700'}`}>
-                          {(currentData.personalInfo.showCpf === true) ? (currentData.personalInfo.cpf || '000.000.000-00') : <EyeOff size={14} className="inline" />}
+                          {isClient && (currentData.personalInfo.showCpf === true) ? (currentData.personalInfo.cpf || '000.000.000-00') : <EyeOff size={14} className="inline" />}
                         </span>
                       )}
                       {isEditing && (
