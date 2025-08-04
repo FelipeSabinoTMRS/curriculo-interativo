@@ -1,7 +1,10 @@
-import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
+import React, { useRef, useLayoutEffect, useState, useEffect, useCallback, useMemo } from "react";
 import type { Resume, Experience, Education, Project, Skill } from '~/types';
 import { Github, Mail, Phone, MapPin, Globe, Palette, Image, Upload, User, DollarSign, CheckCircle, MousePointer, Eye, EyeOff } from 'lucide-react';
 import EditableField from "./EditableField";
+
+// Hook que usa useLayoutEffect no cliente e useEffect no servidor
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 interface ResumeViewerProps {
   resume: Resume;
@@ -138,11 +141,8 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
   const containerRef = useRef<HTMLDivElement>(null);
   const [marginBottom, setMarginBottom] = useState(0);
   
-  // Hook que usa useLayoutEffect no cliente e useEffect no servidor
-  const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
-  
   // Verificação de segurança para dados
-  const safeResume = {
+  const safeResume = useMemo(() => ({
     personalInfo: personalInfo || {},
     experiences: experiences || [],
     education: education || [],
@@ -152,7 +152,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
     selectedTheme: resume.selectedTheme || 'default',
     profilePhoto: resume.profilePhoto || '',
     secondaryDocument: resume.secondaryDocument || { enabled: false }
-  };
+  }), [personalInfo, experiences, education, skills, projects, resume.selectedWallpaper, resume.selectedTheme, resume.profilePhoto, resume.secondaryDocument]);
   
   // Estados locais para edição
   const [localResume, setLocalResume] = useState<Resume>(safeResume);
@@ -171,10 +171,10 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
   const [showWallpaperSelector, setShowWallpaperSelector] = useState(false);
   const [showProfileSelector, setShowProfileSelector] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [currentScale, setCurrentScale] = useState(1); // Escala controlada por estado
+  const [currentScale, setCurrentScale] = useState(1);
 
   // Função utilitária para preview do wallpaper
-  const getWallpaperPreviewStyle = (wallpaperId: string) => {
+  const getWallpaperPreviewStyle = useCallback((wallpaperId: string) => {
     switch (wallpaperId) {
       case 'dots':
         return {
@@ -209,7 +209,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
       default:
         return {};
     }
-  };
+  }, []);
 
   // Sincronizar com prop quando não estiver editando
   useEffect(() => {
@@ -276,14 +276,12 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
     
     const width = window.innerWidth;
     
-    // Escala adaptada para telas estreitas
-    if (width <= 420) return 0.45;
-    if (width <= 520) return 0.52;
-    if (width <= 639) return 0.6;
-    if (width <= 767) return 0.7;
-    if (width <= 899) return 0.8;
-    if (width <= 1023) return 0.9;
-    return 1;
+    if (width >= 1200) return 1.0;      // Desktop grande
+    if (width >= 1024) return 0.9;      // Desktop
+    if (width >= 768) return 0.8;       // Tablet
+    if (width >= 640) return 0.7;       // Mobile grande
+    if (width >= 480) return 0.6;       // Mobile médio
+    return 0.5;                         // Mobile pequeno
   }
 
   /**
