@@ -302,24 +302,10 @@ export default function Index() {
 
   const handleDownloadPDF = async () => {
     try {
-      // Detectar se é dispositivo móvel
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      
-      // Detectar limitações específicas do dispositivo
-      const isLowEndMobile = isMobile && (
-        navigator.hardwareConcurrency <= 2 || // Poucos cores de CPU
-        (navigator as any).deviceMemory <= 2 || // Pouca memória (em GB)
-        /Android.*[1-4]\.|iPhone.*OS [1-9]_|iPad.*OS [1-9]_/.test(navigator.userAgent) // Versões antigas
-      );
-      
       // Mostrar mensagem de carregamento
       dialog.showInfo(
         "Gerando PDF...",
-        isMobile 
-          ? isLowEndMobile
-            ? "Por favor, aguarde. Gerando PDF otimizado para seu dispositivo..."
-            : "Por favor, aguarde. Em dispositivos móveis, o PDF será aberto em uma nova aba."
-          : "Por favor, aguarde enquanto o PDF está sendo gerado.",
+        "Por favor, aguarde enquanto o PDF está sendo gerado.",
         2000
       );
 
@@ -357,7 +343,7 @@ export default function Index() {
         resumeContainer.classList.remove('dark-theme');
         resumeContainer.querySelectorAll('.bg-gray-900, .bg-gray-800, .bg-gray-700, .text-white, .text-gray-300')
           .forEach(element => {
-        const el = element as HTMLElement;
+            const el = element as HTMLElement;
             el.dataset.originalClasses = el.className;
             
             // Substituir classes escuras por claras
@@ -385,11 +371,6 @@ export default function Index() {
         format: 'a4',
         compress: true
       });
-
-      // Verificar se o PDF foi criado corretamente
-      if (!pdf) {
-        throw new Error('Falha ao criar o objeto PDF');
-      }
 
       // Dimensões A4: 210mm x 297mm
       const pdfWidth = 210;
@@ -432,7 +413,7 @@ export default function Index() {
             display: iconEl.style.display
           };
           
-          // Melhoria no posicionamento dos ícones - ajuste mais significativo
+          // Melhoria no posicionamento dos ícones
           iconEl.style.position = 'relative';
           iconEl.style.margin = '0';
           iconEl.style.verticalAlign = 'middle';
@@ -460,7 +441,7 @@ export default function Index() {
             verticalAlign: capsuleEl.style.verticalAlign
           };
           
-          // Normalizar a aparência das cápsulas com mais precisão
+          // Normalizar a aparência das cápsulas
           capsuleEl.style.padding = '0.35rem 0.75rem';
           capsuleEl.style.margin = '0.15rem';
           capsuleEl.style.display = 'inline-flex';
@@ -541,26 +522,22 @@ export default function Index() {
           pdf.addPage();
         }
 
-        // Configurações específicas para mobile vs desktop
-        const html2canvasOptions = {
-          scale: isLowEndMobile ? 0.8 : (isMobile ? 1.5 : 4), // Escala baseada no desempenho
+        // Capturar a página atual com configurações otimizadas (versão simplificada)
+        const canvas = await html2canvas(page, {
+          scale: 2, // Qualidade reduzida para melhor compatibilidade mobile
           useCORS: true,
           allowTaint: true,
           backgroundColor: '#ffffff',
           logging: false,
           windowWidth: 210 * 3.78,
           windowHeight: 297 * 3.78,
-          // Configurações adicionais para mobile
-          foreignObjectRendering: false, // Sempre desabilitar para melhor compatibilidade
-          removeContainer: true,
-          imageTimeout: isLowEndMobile ? 60000 : (isMobile ? 20000 : 5000), // Timeout baseado no desempenho
-          ignoreElements: (element: Element) => {
+          ignoreElements: (element) => {
             return element.classList?.contains('debug-element') || 
                    element.classList?.contains('mobile-menu') ||
                    element.classList?.contains('mobile-menu-overlay') || 
                    false;
           },
-          onclone: (clonedDoc: Document) => {
+          onclone: (clonedDoc) => {
             // Estilos adicionais para o documento clonado
             const clonedPage = clonedDoc.querySelector('.resume-paper');
             if (clonedPage) {
@@ -568,129 +545,8 @@ export default function Index() {
               (clonedPage as HTMLElement).style.border = 'none';
               (clonedPage as HTMLElement).style.borderRadius = '0';
             }
-            
-            // Melhorias específicas para mobile no clone
-            if (isMobile) {
-              const allElements = clonedDoc.querySelectorAll('*');
-              allElements.forEach((el) => {
-                const element = el as HTMLElement;
-                // Garantir que elementos tenham dimensões explícitas
-                if (element.offsetWidth === 0 || element.offsetHeight === 0) {
-                  element.style.display = 'block';
-                  element.style.visibility = 'visible';
-                }
-                // Forçar renderização de elementos SVG
-                if (element.tagName === 'svg') {
-                  element.style.display = 'inline-block';
-                  element.style.verticalAlign = 'middle';
-                }
-                
-                // Para dispositivos de baixo desempenho, simplificar ainda mais
-                if (isLowEndMobile) {
-                  element.style.animation = 'none';
-                  element.style.transition = 'none';
-                  element.style.transform = 'none';
-                }
-              });
-            }
           }
-        };
-
-        // Tentar capturar com configurações otimizadas
-        let canvas;
-        try {
-          canvas = await html2canvas(page, html2canvasOptions);
-        } catch (html2canvasError) {
-          console.error('Erro no html2canvas:', html2canvasError);
-          
-          // Fallback: tentar com configurações mais básicas
-          if (isMobile) {
-            console.log('Tentando fallback para mobile...');
-            
-            // Verificar se o erro é específico do mobile
-            const errorMessage = (html2canvasError as Error).toString().toLowerCase();
-            const isMemoryError = errorMessage.includes('memory') || errorMessage.includes('canvas');
-            const isTimeoutError = errorMessage.includes('timeout') || errorMessage.includes('time');
-            
-            if (isMemoryError || isTimeoutError) {
-              // Configurações ultra-básicas para dispositivos com limitações
-              canvas = await html2canvas(page, {
-                scale: 0.8, // Escala muito baixa para economizar memória
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: '#ffffff',
-                logging: true, // Ativar logging para debug
-                foreignObjectRendering: false,
-                removeContainer: true,
-                imageTimeout: 45000, // Timeout muito alto
-                width: 595, // Largura fixa em pixels (A4)
-                height: 842, // Altura fixa em pixels (A4)
-                ignoreElements: (element: Element) => {
-                  return element.classList?.contains('debug-element') || 
-                         element.classList?.contains('mobile-menu') ||
-                         element.classList?.contains('mobile-menu-overlay') || 
-                         false;
-                },
-                onclone: (clonedDoc: Document) => {
-                  // Simplificar drasticamente o clone para mobile
-                  const clonedPage = clonedDoc.querySelector('.resume-paper');
-                  if (clonedPage) {
-                    (clonedPage as HTMLElement).style.boxShadow = 'none';
-                    (clonedPage as HTMLElement).style.border = 'none';
-                    (clonedPage as HTMLElement).style.borderRadius = '0';
-                    (clonedPage as HTMLElement).style.transform = 'none';
-                    (clonedPage as HTMLElement).style.margin = '0';
-                    (clonedPage as HTMLElement).style.padding = '10px';
-                  }
-                  
-                  // Remover elementos complexos que podem causar problemas
-                  const complexElements = clonedDoc.querySelectorAll('svg, canvas, video, audio');
-                  complexElements.forEach(el => {
-                    el.remove();
-                  });
-                  
-                  // Simplificar estilos
-                  const allElements = clonedDoc.querySelectorAll('*');
-                  allElements.forEach((el) => {
-                    const element = el as HTMLElement;
-                    // Remover animações e transições
-                    element.style.animation = 'none';
-                    element.style.transition = 'none';
-                    element.style.transform = 'none';
-                    
-                    // Garantir que elementos tenham dimensões explícitas
-                    if (element.offsetWidth === 0 || element.offsetHeight === 0) {
-                      element.style.display = 'block';
-                      element.style.visibility = 'visible';
-                      element.style.width = 'auto';
-                      element.style.height = 'auto';
-                    }
-                  });
-                }
-              });
-            } else {
-              // Para outros tipos de erro, tentar configuração intermediária
-              canvas = await html2canvas(page, {
-                scale: 1,
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: '#ffffff',
-                logging: true,
-                foreignObjectRendering: false,
-                removeContainer: true,
-                imageTimeout: 30000,
-                ignoreElements: (element: Element) => {
-                  return element.classList?.contains('debug-element') || 
-                         element.classList?.contains('mobile-menu') ||
-                         element.classList?.contains('mobile-menu-overlay') || 
-                         false;
-                }
-              });
-            }
-          } else {
-            throw html2canvasError;
-          }
-        }
+        });
         
         // Restaurar estilos originais da página
         page.style.border = originalBorder;
@@ -793,6 +649,8 @@ export default function Index() {
         return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
       };
       const userName = removeAccents(resumeData.personalInfo.name.split(' ')[0]);
+      
+      const fileName = `curriculo-${userName}-${timestamp}.pdf`;
 
       // Verificar se há documento secundário para mesclar
       if (resumeData.secondaryDocument?.enabled && resumeData.secondaryDocument?.file) {
@@ -821,37 +679,18 @@ export default function Index() {
           const url = URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.download = `curriculo-${userName}-${timestamp}.pdf`;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
           
-          if (isMobile) {
-            // Em dispositivos móveis, abrir em nova aba
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            
-            // Mostrar mensagem de sucesso
-            dialog.showSuccess(
-              "PDF gerado com sucesso!",
-              "O PDF foi aberto em uma nova aba. Use o botão de compartilhar do seu navegador para salvar.",
-              4000
-            );
-          } else {
-            // Em desktop, fazer download direto
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            
-            // Mostrar mensagem de sucesso
-            dialog.showSuccess(
-              "PDF gerado com sucesso!",
-              `O arquivo "${link.download}" foi salvo na pasta de downloads com o documento adicional.`,
-              3000
-            );
-          }
+          // Mostrar mensagem de sucesso
+          dialog.showSuccess(
+            "PDF gerado com sucesso!",
+            `O arquivo "${fileName}" foi salvo na pasta de downloads com o documento adicional.`,
+            3000
+          );
           return;
         } catch (mergeError) {
           console.error("Erro ao mesclar PDFs:", mergeError);
@@ -859,91 +698,21 @@ export default function Index() {
         }
       }
 
-      const fileName = `curriculo-${userName}-${timestamp}.pdf`;
+      // Fazer download do PDF
+      pdf.save(fileName);
 
-      if (isMobile) {
-        // Em dispositivos móveis, tentar diferentes métodos de download
-        try {
-          // Método 1: Data URI
-          const pdfDataUri = pdf.output('datauristring');
-          const link = document.createElement('a');
-          link.href = pdfDataUri;
-          link.target = '_blank';
-          link.rel = 'noopener noreferrer';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          
-          // Mostrar mensagem de sucesso
-          dialog.showSuccess(
-            "PDF gerado com sucesso!",
-            "O PDF foi aberto em uma nova aba. Use o botão de compartilhar do seu navegador para salvar.",
-            4000
-          );
-        } catch (dataUriError) {
-          console.error('Erro com data URI:', dataUriError);
-          
-          // Método 2: Blob URL
-          try {
-            const pdfBlob = pdf.output('blob');
-            const blobUrl = URL.createObjectURL(pdfBlob);
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(blobUrl);
-            
-            // Mostrar mensagem de sucesso
-            dialog.showSuccess(
-              "PDF gerado com sucesso!",
-              "O PDF foi aberto em uma nova aba. Use o botão de compartilhar do seu navegador para salvar.",
-              4000
-            );
-          } catch (blobError) {
-            console.error('Erro com blob URL:', blobError);
-            
-            // Método 3: Download direto (último recurso)
-            pdf.save(fileName);
-            
-            // Mostrar mensagem de sucesso
-            dialog.showSuccess(
-              "PDF gerado com sucesso!",
-              `O arquivo "${fileName}" foi salvo. Verifique sua pasta de downloads.`,
-              4000
-            );
-          }
-        }
-      } else {
-        // Em desktop, fazer download direto
-        pdf.save(fileName);
-        
-        // Mostrar mensagem de sucesso
-        dialog.showSuccess(
-          "PDF gerado com sucesso!",
-          `O arquivo "${fileName}" foi salvo na pasta de downloads.`,
-          3000
-        );
-      }
+      // Mostrar mensagem de sucesso
+      dialog.showSuccess(
+        "PDF gerado com sucesso!",
+        `O arquivo "${fileName}" foi salvo na pasta de downloads.`,
+        3000
+      );
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
-      
-      // Detectar se é dispositivo móvel para mensagem específica
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      
-      if (isMobile) {
-        dialog.showError(
-          "Erro ao gerar PDF",
-          "Não foi possível gerar o PDF no dispositivo móvel. Tente:\n\n1. Usar um navegador diferente (Chrome/Safari)\n2. Verificar se há espaço suficiente\n3. Tentar novamente em alguns segundos\n4. Usar o modo desktop do navegador"
-        );
-      } else {
-        dialog.showError(
-          "Erro ao gerar PDF",
-          "Não foi possível criar o arquivo PDF. Por favor, tente novamente."
-        );
-      }
+      dialog.showError(
+        "Erro ao gerar PDF",
+        "Não foi possível criar o arquivo PDF. Por favor, tente novamente."
+      );
     }
   };
 
