@@ -767,9 +767,23 @@ export default function Index() {
       resumeContainer.style.transition = originalTransition;
       resumeContainer.classList.remove('pdf-render');
 
-      // Gerar nome do arquivo com data/hora
+      // Gerar nome do arquivo com nome do usuário e data/hora no fuso horário de Brasília
       const now = new Date();
-      const timestamp = now.toISOString().slice(0, 16).replace(/[T:]/g, '-');
+      
+      // Converter para fuso horário de Brasília (UTC-3)
+      const brasiliaTime = new Date(now.getTime() - (3 * 60 * 60 * 1000));
+      
+      // Formatar como dia-mês-ano-hora (DD-MM-YYYY-HH-MM)
+      const day = String(brasiliaTime.getUTCDate()).padStart(2, '0');
+      const month = String(brasiliaTime.getUTCMonth() + 1).padStart(2, '0');
+      const year = brasiliaTime.getUTCFullYear();
+      const hours = String(brasiliaTime.getUTCHours()).padStart(2, '0');
+      const minutes = String(brasiliaTime.getUTCMinutes()).padStart(2, '0');
+      
+      const timestamp = `${day}-${month}-${year}-${hours}-${minutes}`;
+      
+      // Extrair o primeiro nome do usuário do currículo
+      const userName = resumeData.personalInfo.name.split(' ')[0].toLowerCase();
 
       // Verificar se há documento secundário para mesclar
       if (resumeData.secondaryDocument?.enabled && resumeData.secondaryDocument?.file) {
@@ -798,7 +812,7 @@ export default function Index() {
           const url = URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.download = `curriculo-felipe-sabino-${timestamp}.pdf`;
+          link.download = `curriculo-${userName}-${timestamp}.pdf`;
           
           if (isMobile) {
             // Em dispositivos móveis, abrir em nova aba
@@ -836,7 +850,7 @@ export default function Index() {
         }
       }
 
-      const fileName = `curriculo-felipe-sabino-${timestamp}.pdf`;
+      const fileName = `curriculo-${userName}-${timestamp}.pdf`;
 
       if (isMobile) {
         // Em dispositivos móveis, tentar diferentes métodos de download
