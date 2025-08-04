@@ -104,22 +104,20 @@ const COOKIE_MAX_AGE = 30 * 24 * 60 * 60; // 30 dias
 
 export default function Index() {
   const [resumeData, setResumeData] = useState<Resume>(mockResume);
-  const [isDarkTheme, setIsDarkTheme] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('theme');
-      return saved === 'dark';
-    }
-    return false;
-  });
+  const [isDarkTheme, setIsDarkTheme] = useState(false); // Sempre iniciar com false para consistência
   const [isEditing, setIsEditing] = useState(false);
   const [editSession, setEditSession] = useState<string | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false); // Controlar quando dados foram carregados
   const dialog = useDialog();
 
-  // Carregar tema e dados do currículo
+  // Carregar tema e dados do currículo apenas no cliente
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // Salvar tema no localStorage sempre que mudar
-      localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
+      // Carregar tema salvo
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        setIsDarkTheme(true);
+      }
       
       // Carregar dados salvos do currículo ou usar mockResume como padrão
       const savedResume = getCookie(RESUME_DATA_COOKIE);
@@ -156,8 +154,18 @@ export default function Index() {
         console.log('Usando mockResume (sem cookie)');
         setResumeData(mockResume);
       }
+      
+      // Marcar como carregado após processar dados
+      setIsLoaded(true);
     }
-  }, [isDarkTheme]);
+  }, []); // Executar apenas uma vez
+
+  // Salvar tema quando mudar (separado do carregamento inicial)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && isLoaded) {
+      localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
+    }
+  }, [isDarkTheme, isLoaded]);
 
   // Salvar dados em cookie ou localStorage como fallback
   const saveResumeToCookie = (data: Resume) => {
@@ -727,7 +735,7 @@ export default function Index() {
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
       isDarkTheme ? 'bg-gray-900' : 'bg-gray-200'
-    }`}>
+    }`} suppressHydrationWarning={true}>
       {/* Animated background layers - only for dark theme */}
       {isDarkTheme && (
         <>

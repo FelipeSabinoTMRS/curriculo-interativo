@@ -156,9 +156,16 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
   
   // Estados locais para edição
   const [localResume, setLocalResume] = useState<Resume>(safeResume);
-  const [selectedTheme, setSelectedTheme] = useState<Theme>(themes[0]); // Valor padrão para evitar hidratação
-  const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper>(wallpapers[0]); // Valor padrão para evitar hidratação
-  const [profilePhoto, setProfilePhoto] = useState<string>('');
+  // Inicializar com valores consistentes baseados no safeResume para evitar hidratação
+  const [selectedTheme, setSelectedTheme] = useState<Theme>(() => {
+    const themeId = safeResume.selectedTheme || 'default';
+    return themes.find(t => t.id === themeId) || themes[0];
+  });
+  const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper>(() => {
+    const wallpaperId = safeResume.selectedWallpaper || 'none';
+    return wallpapers.find(w => w.id === wallpaperId) || wallpapers[0];
+  });
+  const [profilePhoto, setProfilePhoto] = useState<string>(safeResume.profilePhoto || '');
   const [showThemePalette, setShowThemePalette] = useState(false);
   const [showWallpaperSelector, setShowWallpaperSelector] = useState(false);
   const [showProfileSelector, setShowProfileSelector] = useState(false);
@@ -913,7 +920,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                 Foto de Perfil
               </label>
               <div className="flex items-center space-x-3">
-                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center" suppressHydrationWarning={true}>
                   {isClient && profilePhoto ? (
                     <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover object-center scale-110" />
                   ) : (
@@ -1131,46 +1138,48 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                   </label>
                 </div>
                 
-                {isClient && currentData.secondaryDocument?.enabled && (
-                  <div className="space-y-2">
-                    <label className={`block text-sm ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
-                      Arquivo PDF:
-                    </label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="file"
-                        accept=".pdf"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onload = (event) => {
-                              const base64 = event.target?.result as string;
-                              const updatedResume = {
-                                ...localResume,
-                                secondaryDocument: {
-                                  ...localResume.secondaryDocument,
-                                  enabled: localResume.secondaryDocument?.enabled || false,
-                                  file: base64,
-                                  fileName: file.name
-                                }
+                <div suppressHydrationWarning={true}>
+                  {isClient && currentData.secondaryDocument?.enabled && (
+                    <div className="space-y-2">
+                      <label className={`block text-sm ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
+                        Arquivo PDF:
+                      </label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                const base64 = event.target?.result as string;
+                                const updatedResume = {
+                                  ...localResume,
+                                  secondaryDocument: {
+                                    ...localResume.secondaryDocument,
+                                    enabled: localResume.secondaryDocument?.enabled || false,
+                                    file: base64,
+                                    fileName: file.name
+                                  }
+                                };
+                                setLocalResume(updatedResume);
+                                onFieldChange?.(updatedResume);
                               };
-                              setLocalResume(updatedResume);
-                              onFieldChange?.(updatedResume);
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
-                        className={`text-xs ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}
-                      />
-                      {isClient && currentData.secondaryDocument?.fileName && (
-                        <span className={`text-xs ${isDarkTheme ? 'text-green-400' : 'text-green-600'}`}>
-                          ✓ {currentData.secondaryDocument.fileName}
-                        </span>
-                      )}
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className={`text-xs ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}
+                        />
+                        {isClient && currentData.secondaryDocument?.fileName && (
+                          <span className={`text-xs ${isDarkTheme ? 'text-green-400' : 'text-green-600'}`}>
+                            ✓ {currentData.secondaryDocument.fileName}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -1392,7 +1401,7 @@ export default function ResumeViewer({ resume, isDarkTheme = false, isEditing = 
                           placeholder="000.000.000-00"
                         />
                       ) : (
-                        <span className={`text-sm ${isDarkTheme ? 'text-gray-300 print:text-gray-700' : 'text-gray-700'}`}>
+                        <span className={`text-sm ${isDarkTheme ? 'text-gray-300 print:text-gray-700' : 'text-gray-700'}`} suppressHydrationWarning={true}>
                           {isClient && (currentData.personalInfo.showCpf === true) ? (currentData.personalInfo.cpf || '000.000.000-00') : <EyeOff size={14} className="inline" />}
                         </span>
                       )}

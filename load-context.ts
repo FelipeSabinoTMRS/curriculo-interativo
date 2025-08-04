@@ -1,7 +1,7 @@
 import { type PlatformProxy } from "wrangler";
 
 // Definir tipos do ambiente
-interface Env {
+export interface Env {
   ENVIRONMENT: string;
 }
 

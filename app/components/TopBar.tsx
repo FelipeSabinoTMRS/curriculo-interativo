@@ -4,9 +4,16 @@ import { Edit3, Download, Menu, X, Github, Sun, Moon, RefreshCw } from 'lucide-r
 // Componente para o título animado
 const AnimatedTitle = ({ isDarkTheme }: { isDarkTheme: boolean }) => {
   const [currentText, setCurrentText] = useState('Interativo');
-  const [isTyping, setIsTyping] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  // Garantir que a animação só rode no cliente
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
+    if (!isClient) return;
+    
     const words = ['Interativo', 'Especialista'];
     let wordIndex = 0;
     let charIndex = 0;
@@ -39,7 +46,7 @@ const AnimatedTitle = ({ isDarkTheme }: { isDarkTheme: boolean }) => {
 
     const timer = setTimeout(typeText, 1000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isClient]);
 
   return (
     <h1 className={`text-xl font-bold ${isDarkTheme ? 'text-white' : 'text-black'}`}>
@@ -49,6 +56,7 @@ const AnimatedTitle = ({ isDarkTheme }: { isDarkTheme: boolean }) => {
         style={{
           color: '#fbbf24',
         }}
+        suppressHydrationWarning={true}
       >
         {currentText}
       </span>
